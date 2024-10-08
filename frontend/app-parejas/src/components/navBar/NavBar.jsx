@@ -26,7 +26,6 @@ const NavBar = () => {
             <button onClick={goToLogin}>Login</button>
             <button onClick={goDashboard}>Dashboard</button>
             <button onClick={goCompletedTasks}>Completed Tasks</button>
-
         </div>
     )
 }

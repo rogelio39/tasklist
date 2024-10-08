@@ -27,6 +27,8 @@
 
 
 .dashboard-container .task-list .incompleted {
+    display: flex;
+    flex-direction: column;
     background-color: #e04837eb;
     border-radius: 10px;
     padding: 20px;
