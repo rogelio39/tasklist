@@ -37,9 +37,10 @@ const TaskList = () => {
             <h1>Tareas</h1>
             <ul>
                 {tasks.map((task) => (
-                    <li className='completed' key={task._id}>
-                        {task.title} - {task.completed ? 'Completada' : 'Pendiente'}
-                    </li>
+                    task.completed ?
+                    <li className={task.completed ? 'completed' : 'incompleted'} key={task._id}>
+                        <p>{task.title} - {task.completed ? 'Completada' : 'Pendiente'}</p>
+                    </li> : <p key={task._id}></p>
                 ))}
             </ul>
         </div>

@@ -21,8 +21,13 @@
     justify-content: space-between;
 }
 
-.task-list li.completed {
-    background-color: #2fe99f;
+.task-list li.completed p {
     text-decoration: line-through;
-    color: #9E9E9E;
+    color: #434343;
+}
+
+
+.task-list li.completed button {
+    text-decoration: none !important;
+    color: inherit !important;
 }

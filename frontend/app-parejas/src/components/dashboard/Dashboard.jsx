@@ -91,6 +91,31 @@ const Dashboard = () => {
         }
     };
 
+    const deleteTask = async (taskId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`${URL1}/api/tasks/${taskId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+    
+            if (!res.ok) {
+                throw new Error('Error deleting task');
+            }
+    
+            // Aquí simplemente eliminas la tarea del estado sin hacer fetch de la tarea eliminada
+            setTasks((prevTasks) =>
+                prevTasks.filter((task) => task._id !== taskId)
+            );
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+    
+
     // Render loading or error states
     if (loading) {
         return <p>Cargando tareas...</p>;
@@ -117,12 +142,12 @@ const Dashboard = () => {
             <ul className='task-list'>
                 {tasks.map((task) => (
                     <li className={task.completed ? 'completed' : 'incompleted'} key={task._id}>
-                        {task.title} - {task.completed ? 'Completada' : 'Pendiente'}
-                        {!task.completed && (
+                        <p>{task.title} - {task.completed ? 'Completada' : 'Pendiente'}</p>
+                        {!task.completed ? (
                             <button onClick={() => completeTask(task._id)}>
                                 Marcar como Completada
                             </button>
-                        )}
+                        ) : <button onClick={() => deleteTask(task._id)}>eliminar tarea</button>}
                     </li>
                 ))}
             </ul>
