@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import './LoginPage.css'
+import { useNavigate } from 'react-router-dom';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const navigate = useNavigate()
 
     const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL
 
@@ -20,6 +22,7 @@ const LoginPage = () => {
         const data = await response.json();
         if (response.ok) {
             localStorage.setItem('token', data.token);
+            navigate('/dashboard');
         } else {
             console.error('Login failed');
         }

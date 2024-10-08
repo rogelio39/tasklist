@@ -16,9 +16,14 @@ const NavBar = () => {
         navigate('/')
     }
 
+    const goToLogin = () => {
+        navigate('/login')
+    }
+
     return (
         <div className="nav-container">
             <button onClick={goIndex}>Inicio</button>
+            <button onClick={goToLogin}>Login</button>
             <button onClick={goDashboard}>Dashboard</button>
             <button onClick={goCompletedTasks}>Completed Tasks</button>
 
