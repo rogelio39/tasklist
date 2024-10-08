@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import './RegisterPage.css'
+
+const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL
 const RegisterPage = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -8,7 +10,7 @@ const RegisterPage = () => {
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('http://localhost:5000/api/users/register', {
+        const response = await fetch(`${URL1}/api/users/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

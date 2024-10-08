@@ -7,7 +7,8 @@ import TaskRouter from './routes/Tasks.routes.js';
 
 const app = express();
 
-const whiteList = ['http://localhost:5173']
+const URL1 = process.env.MODE === "DEV" ? process.env.LOCAL_URL : process.env.BACKEND_URL
+const whiteList = [process.env.LOCAL_URL, process.env.BACKEND_URL]
 
 const corsOptions = {
     origin: function (origin, callback) {

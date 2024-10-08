@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import './TaskList.css'
+
+const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL
 const TaskList = () => {
     const [tasks, setTasks] = useState([]);
 
@@ -8,7 +10,7 @@ const TaskList = () => {
             try {
                 const token = localStorage.getItem('token');
                 
-                const res = await fetch('http://localhost:5000/api/tasks', {
+                const res = await fetch(`${URL1}/api/tasks`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,

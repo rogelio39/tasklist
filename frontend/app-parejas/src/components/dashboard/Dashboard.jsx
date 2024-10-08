@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import './Dashboard.css'
+
+
+const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL
 const Dashboard = () => {
     const [tasks, setTasks] = useState([]);
     const [newTask, setNewTask] = useState('');
@@ -12,7 +15,7 @@ const Dashboard = () => {
             setLoading(true);
             try {
                 const token = localStorage.getItem('token');
-                const res = await fetch('http://localhost:5000/api/tasks', {
+                const res = await fetch(`${URL1}/api/tasks`, {
                     method: 'GET',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -41,7 +44,7 @@ const Dashboard = () => {
         if (newTask.trim() === '') return;
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch('http://localhost:5000/api/tasks', {
+            const res = await fetch(`${URL1}/api/tasks`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -66,7 +69,7 @@ const Dashboard = () => {
     const completeTask = async (taskId) => {
         try {
             const token = localStorage.getItem('token');
-            const res = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+            const res = await fetch(`${URL1}/api/tasks/${taskId}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,

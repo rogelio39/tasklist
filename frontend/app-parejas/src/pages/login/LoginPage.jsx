@@ -4,10 +4,12 @@ const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
+    const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL
+
     const submitHandler = async (e) => {
         e.preventDefault();
 
-        const response = await fetch('http://localhost:5000/api/users/login', {
+        const response = await fetch(`${URL1}/api/users/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
