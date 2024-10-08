@@ -15,3 +15,22 @@
     padding: 20px;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
+
+.dashboard-container .task-list .completed {
+    background-color: #32b2728f;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: black;
+}
+
+
+
+.dashboard-container .task-list .incompleted {
+    background-color: #e04837eb;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+

@@ -116,7 +116,7 @@ const Dashboard = () => {
 
             <ul className='task-list'>
                 {tasks.map((task) => (
-                    <li key={task._id}>
+                    <li className={task.completed ? 'completed' : 'incompleted'} key={task._id}>
                         {task.title} - {task.completed ? 'Completada' : 'Pendiente'}
                         {!task.completed && (
                             <button onClick={() => completeTask(task._id)}>
