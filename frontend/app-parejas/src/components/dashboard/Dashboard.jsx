@@ -1,0 +1,130 @@
+import { useState, useEffect } from 'react';
+import './Dashboard.css'
+const Dashboard = () => {
+    const [tasks, setTasks] = useState([]);
+    const [newTask, setNewTask] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+
+    // Fetch all tasks when component mounts
+    useEffect(() => {
+        const fetchTasks = async () => {
+            setLoading(true);
+            try {
+                const token = localStorage.getItem('token');
+                const res = await fetch('http://localhost:5000/api/tasks', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!res.ok) {
+                    throw new Error('Error fetching tasks');
+                }
+
+                const data = await res.json();
+                setTasks(data);
+                setLoading(false);
+            } catch (error) {
+                setError(error.message);
+                setLoading(false);
+            }
+        };
+
+        fetchTasks();
+    }, []);
+
+    // Function to add a new task
+    const addTask = async () => {
+        if (newTask.trim() === '') return;
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch('http://localhost:5000/api/tasks', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ title: newTask }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Error adding task');
+            }
+
+            const addedTask = await res.json();
+            setTasks((prevTasks) => [...prevTasks, addedTask]);
+            setNewTask(''); // Clear input field
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    // Function to mark a task as completed
+    const completeTask = async (taskId) => {
+        try {
+            const token = localStorage.getItem('token');
+            const res = await fetch(`http://localhost:5000/api/tasks/${taskId}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ completed: true }),
+            });
+
+            if (!res.ok) {
+                throw new Error('Error marking task as completed');
+            }
+
+            const updatedTask = await res.json();
+            setTasks((prevTasks) =>
+                prevTasks.map((task) => (task._id === taskId ? updatedTask : task))
+            );
+        } catch (error) {
+            setError(error.message);
+        }
+    };
+
+    // Render loading or error states
+    if (loading) {
+        return <p>Cargando tareas...</p>;
+    }
+
+    if (error) {
+        return <p>Error: {error}</p>;
+    }
+
+    return (
+        <div className='dashboard-container'>
+            <h1>Dashboard de Tareas</h1>
+
+            <div>
+                <input
+                    type="text"
+                    value={newTask}
+                    onChange={(e) => setNewTask(e.target.value)}
+                    placeholder="Nueva tarea"
+                />
+                <button onClick={addTask}>Agregar Tarea</button>
+            </div>
+
+            <ul className='task-list'>
+                {tasks.map((task) => (
+                    <li key={task._id}>
+                        {task.title} - {task.completed ? 'Completada' : 'Pendiente'}
+                        {!task.completed && (
+                            <button onClick={() => completeTask(task._id)}>
+                                Marcar como Completada
+                            </button>
+                        )}
+                    </li>
+                ))}
+            </ul>
+        </div>
+    );
+};
+
+export default Dashboard;

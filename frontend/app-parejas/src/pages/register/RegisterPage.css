@@ -1,0 +1,31 @@
+.register-container {
+    max-width: 400px;
+    background-color: #FFF;
+    padding: 30px;
+    margin: 50px auto;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.register-container h1 {
+    margin-bottom: 20px;
+    color: #4A90E2;
+}
+
+.register-container form {
+    display: flex;
+    flex-direction: column;
+}
+
+.register-container input {
+    margin-bottom: 15px;
+}
+
+.register-container button {
+    background-color: #50E3C2;
+    margin-top: 15px;
+}
+
+.register-container button:hover {
+    background-color: #43B39C;
+}

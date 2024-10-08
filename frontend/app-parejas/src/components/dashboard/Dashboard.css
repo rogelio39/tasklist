@@ -1,0 +1,17 @@
+.dashboard-container {
+    max-width: 1200px;
+    margin: 50px auto;
+    padding: 20px;
+}
+
+.dashboard-container h1 {
+    color: #4A90E2;
+    margin-bottom: 20px;
+}
+
+.dashboard-container .task-list {
+    background-color: #FFF;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
