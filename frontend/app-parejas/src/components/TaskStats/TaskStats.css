@@ -1,0 +1,32 @@
+.task-stats-container {
+    padding: 20px;
+}
+
+.task-stats-container h1 {
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.task-stats-container div {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.task-stats-container button {
+    padding: 10px 20px;
+    background-color: #17a2b8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.task-stats-container button:hover {
+    background-color: #138496;
+}
+
+.task-stats-container p {
+    font-size: 18px;
+    margin-top: 20px;
+}

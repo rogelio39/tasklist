@@ -5,12 +5,10 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     const goDashboard = () => {
-        navigate('/dashboard');
+        navigate('/tabla');
     }
 
-    const goCompletedTasks = () => {
-        navigate('/tasks')
-    }
+
 
     const goIndex = () => {
         navigate('/')
@@ -20,12 +18,13 @@ const NavBar = () => {
         navigate('/login')
     }
 
+
     return (
         <div className="nav-container">
             <button onClick={goIndex}>Inicio</button>
             <button onClick={goToLogin}>Login</button>
-            <button onClick={goDashboard}>Dashboard</button>
-            <button onClick={goCompletedTasks}>Completed Tasks</button>
+            <button onClick={goDashboard}>Tabla</button>
+
         </div>
     )
 }
