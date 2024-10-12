@@ -28,6 +28,7 @@ const Dashboard = () => {
                 }
 
                 const data = await res.json();
+
                 setTasks(data);
                 setLoading(false);
             } catch (error) {
@@ -56,6 +57,8 @@ const Dashboard = () => {
             if (!res.ok) {
                 throw new Error('Error adding task');
             }
+
+
 
             const addedTask = await res.json();
             setTasks((prevTasks) => [...prevTasks, addedTask]);

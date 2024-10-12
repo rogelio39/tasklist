@@ -31,3 +31,12 @@
 .calendar-task-container button:hover {
     background-color: #0056b3;
 }
+
+
+.dot {
+    height: 8px;
+    width: 8px;
+    background-color: red;
+    border-radius: 50%;
+    display: inline-block;
+}   

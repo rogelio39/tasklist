@@ -1,30 +1,36 @@
 import Task from '../models/Task.models.js';
 
+// Controlador para crear una nueva tarea
 export const createTask = async (req, res) => {
-    const { title, description, assignedTo, dueDate, priority, notes } = req.body;
+    const { title, description, dueDate, priority, notes, createdBy, assignedTo } = req.body;
+
+
 
     try {
-        // Crear una nueva tarea con los datos proporcionados
-        const task = new Task({
+        const newTask = new Task({
             title,
             description,
-            assignedTo,           // Usuario al que se le asigna la tarea
-            createdBy: req.user._id, // Usuario que crea la tarea
-            dueDate: dueDate ? new Date(dueDate) : null, // Fecha de vencimiento
-            priority: priority || 'Medium', // Nivel de prioridad, por defecto 'Medium'
-            notes, // Notas adicionales
+            dueDate: dueDate ? new Date(dueDate) : null,
+            priority: priority || 'Medium', 
+            notes,
+            createdBy: req.user._id, 
+            assignedTo: assignedTo || req.user._id,
+            completed: false
         });
 
-        // Guardar la tarea en la base de datos
-        const createdTask = await task.save();
+        await newTask.save();
 
-        // Responder con la tarea creada
-        res.status(201).json(createdTask);
+
+
+        console.log("newtast", newTask)
+        res.status(201).json(newTask);
     } catch (error) {
-        // Enviar error en caso de fallos
-        res.status(500).json({ message: 'Error al crear la tarea', error });
+        console.error('Error al crear la tarea:', error); // Para ver detalles del error
+        res.status(500).json({ message: 'Error al crear la tarea', error: error.message });
     }
+    
 };
+
 
 
 export const getTasks = async (req, res) => {
@@ -81,5 +87,25 @@ export const getTaskStats = async (req, res) => {
         res.status(200).json({ taskCount });
     } catch (error) {
         res.status(500).json({ message: 'Error al obtener las estadísticas' });
+    }
+};
+
+
+// Controlador para obtener las tareas por fecha
+export const getTasksByDate = async (req, res) => {
+    const { date } = req.query;
+    try {
+        const startOfDay = new Date(date);
+        startOfDay.setUTCHours(0, 0, 0, 0);  // Comienza a medianoche
+        const endOfDay = new Date(startOfDay);
+        endOfDay.setUTCHours(23, 59, 59, 999);  // Termina justo antes de la medianoche del siguiente día
+
+        const tasks = await Task.find({
+            dueDate: { $gte: startOfDay, $lte: endOfDay }
+        });
+
+        res.status(200).json(tasks);
+    } catch (error) {
+        res.status(500).json({ message: 'Error al obtener las tareas para la fecha seleccionada' });
     }
 };
