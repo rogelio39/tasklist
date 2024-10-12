@@ -22,7 +22,7 @@ const LoginPage = () => {
         const data = await response.json();
         if (response.ok) {
             localStorage.setItem('token', data.token);
-            navigate('/dashboard');
+            navigate('/tabla');
         } else {
             console.error('Login failed');
         }
