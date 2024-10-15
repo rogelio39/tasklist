@@ -1,46 +1,73 @@
 .calendar-section {
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+    padding: 10px;
     gap: 1rem;
+    background-color: #f5f5f5;
 }
 
 
+.calendar {
+    width: 100%;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
 
 .tasks-section {
-    width: 55%; /* Ajusta según sea necesario */
-}
-
-.calendar-task-container h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-.calendar-task-container input,
-.calendar-task-container select {
-    padding: 10px;
     width: 100%;
-    margin-top: 15px;
-    border: 1px solid #ccc;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+input, select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
     border-radius: 5px;
 }
 
-.calendar button {
+button {
+    padding: 10px;
+    font-size: 1rem;
     background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.calendar-task-container button:hover {
+button:hover {
     background-color: #0056b3;
 }
 
 .dot {
-    height: 10px;
-    width: 10px;
+    height: 8px;
+    width: 8px;
     background-color: red;
     border-radius: 50%;
     display: inline-block;
-    margin-top: 5px;
 }
