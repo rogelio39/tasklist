@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
-import 'react-calendar/dist/Calendar.css';
+import './CalendarTask.css';  // Asegúrate de que el archivo CSS esté importado
 
 const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
@@ -111,13 +111,13 @@ const CalendarTask = () => {
     }, []);
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <div>
+        <div className='calendar-section'>  {/* Aplicamos la clase CSS aquí */}
+            <div className='calendar' >   {/* Nueva clase */}
                 <h1>Agendar Tareas en el Calendario</h1>
                 <Calendar onChange={handleDateChange} value={selectedDate} tileContent={tileContent} />
             </div>
 
-            <div>
+            <div className="tasks-section">   {/* Nueva clase */}
                 <h3>Tareas para {selectedDate.toDateString()}</h3>
                 {tasksForDate.length > 0 ? (
                     <ul>

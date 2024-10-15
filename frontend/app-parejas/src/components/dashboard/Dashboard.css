@@ -46,7 +46,6 @@
 }
 
 .task-list .completed {
-    text-decoration: line-through;
     color: gray;
     background-color: #74f191;
 }
@@ -65,6 +64,7 @@
     border-radius: 5px;
     cursor: pointer;
     height: fit-content;
+    text-decoration: none;
 }
 
 .task-list button:hover {
