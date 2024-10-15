@@ -1,15 +1,13 @@
-.calendar-task-container {
+.calendar-section {
     padding: 20px;
     background-color: #fff;
     border-radius: 10px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
 }
 
-.calendar-section {
-    margin-right: 20px;
-    width: 40%; /* Ajusta según sea necesario */
-}
 
 
 .tasks-section {

@@ -104,11 +104,11 @@ const Dashboard = () => {
                     'Content-Type': 'application/json',
                 },
             });
-    
+
             if (!res.ok) {
                 throw new Error('Error deleting task');
             }
-    
+
             // Aquí simplemente eliminas la tarea del estado sin hacer fetch de la tarea eliminada
             setTasks((prevTasks) =>
                 prevTasks.filter((task) => task._id !== taskId)
@@ -117,7 +117,19 @@ const Dashboard = () => {
             setError(error.message);
         }
     };
-    
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+
+        // Obtén el día, mes y año
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses van de 0 a 11, por eso se suma 1
+        const year = date.getFullYear();
+
+        // Retorna el formato día/mes/año
+        return `${day}/${month}/${year}`;
+    };
+
 
     // Render loading or error states
     if (loading) {
@@ -145,7 +157,15 @@ const Dashboard = () => {
             <ul className='task-list'>
                 {tasks.map((task) => (
                     <li className={task.completed ? 'completed' : 'incompleted'} key={task._id}>
-                        <p>{task.title} - {task.completed ? 'Completada' : 'Pendiente'}</p>
+                        <div className='task-description'>
+                            <span><h3>Titulo:</h3><p>{task.title}</p></span>
+                            <span><h3>Description:</h3><p>{task.description}</p></span>
+                            <span><h3>Fecha:</h3><p>{task.dueDate ? formatDate(task.dueDate) : 'No tiene fecha para cumplirse'}</p></span>
+                            <span><h3>Prioridad:</h3><p>{task.priority}</p></span>
+                            <span><h3>Notas adicionales:</h3><p>{task.notes}</p></span>
+                            <span><h3>Estado: </h3><p>{task.completed ? 'Completada' : 'Pendiente'}</p>
+                            </span>
+                        </div>
                         {!task.completed ? (
                             <button onClick={() => completeTask(task._id)}>
                                 Marcar como Completada

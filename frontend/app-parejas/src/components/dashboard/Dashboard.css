@@ -36,6 +36,7 @@
 
 .task-list li {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
@@ -46,7 +47,7 @@
 }
 
 .task-list .completed {
-    color: gray;
+    color: rgb(226, 226, 226);
     background-color: #74f191;
 }
 
@@ -69,4 +70,9 @@
 
 .task-list button:hover {
     background-color: #0056b3;
+}
+
+
+.task-description{
+    align-self: flex-start;
 }
