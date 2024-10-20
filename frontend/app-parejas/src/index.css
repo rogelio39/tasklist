@@ -17,9 +17,14 @@ h1, h2, h3, h4, h5, h6 {
   color: #4A90E2;
 }
 
+ul, li {
+  text-decoration: none;
+}
+
 button {
   color: #FFF;
   border: none;
+
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s ease;

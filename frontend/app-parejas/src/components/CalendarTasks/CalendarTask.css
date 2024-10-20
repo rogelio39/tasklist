@@ -30,10 +30,12 @@ ul {
     padding: 0;
 }
 
-li {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
+
+.tasks-section ul {
+    padding: 10px;  
+    border-bottom: 1px solid #06fa80;
 }
+
 
 form {
     display: flex;

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import './Dashboard.css'
+import { fetchTasks } from '../../Services/Api';
+// import { TasksContext } from '../../Context/TasksContext';
 
 
 const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL
@@ -8,27 +10,13 @@ const Dashboard = () => {
     const [newTask, setNewTask] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-
+    // const {addTask} = useContext(TasksContext);
     // Fetch all tasks when component mounts
     useEffect(() => {
-        const fetchTasks = async () => {
+        const fetchAllTasks = async () => {
             setLoading(true);
             try {
-                const token = localStorage.getItem('token');
-                const res = await fetch(`${URL1}/api/tasks`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
-
-                if (!res.ok) {
-                    throw new Error('Error fetching tasks');
-                }
-
-                const data = await res.json();
-
+                const data = await fetchTasks()
                 setTasks(data);
                 setLoading(false);
             } catch (error) {
@@ -37,7 +25,7 @@ const Dashboard = () => {
             }
         };
 
-        fetchTasks();
+        fetchAllTasks();
     }, []);
 
     // Function to add a new task
@@ -174,6 +162,7 @@ const Dashboard = () => {
                     </li>
                 ))}
             </ul>
+
         </div>
     );
 };

@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Calendar from 'react-calendar';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd'; // Para el Drag & Drop
 import './CalendarTask.css';  // Asegúrate de que el archivo CSS esté importado
-
-const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL;
+import { fetchTasks, fetchTasksForDate } from '../../Services/Api';
+import { TasksContext } from '../../Context/TasksContext';
 
 const CalendarTask = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
@@ -14,77 +15,65 @@ const CalendarTask = () => {
         notes: ''
     });
     const [allTasks, setAllTasks] = useState([]);  // Almacena todas las tareas para marcar en el calendario
+    const [view, setView] = useState('month'); // Estado para la vista (mensual/semanal/diaria)
+    const { modifyTask, addTask } = useContext(TasksContext);
 
-    // Función para obtener todas las tareas y mostrar puntos en las fechas del calendario
+
+
+    // Función para obtener todas las tareas
     const fetchAllTasks = async () => {
-        const token = localStorage.getItem('token');
         try {
-            const response = await fetch(`${URL1}/api/tasks`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                }
-            });
-            const data = await response.json();
+            const data = await fetchTasks()
             setAllTasks(data); // Guardamos todas las tareas para procesar las fechas
         } catch (error) {
             console.error('Error al obtener todas las tareas:', error);
         }
     };
 
-    // Función para obtener las tareas de una fecha específica
-    const fetchTasksForDate = async (date) => {
-        const token = localStorage.getItem('token');
-        try {
-            const response = await fetch(`${URL1}/api/tasks/tasks-by-date?date=${date.toISOString()}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                }
-            });
+    const updateTask = async (updatedTask) => {
 
-            const data = await response.json();
+        try {
+            const updateOk = await modifyTask(updatedTask);
+            if (updateOk) {
+                console.log('Tarea actualizada:', updateOk);
+            }
+        } catch (error) {
+            console.error('Error al actualizar la tarea:', error);
+        }
+    };
+
+
+    // Función para obtener las tareas de una fecha específica
+    const getAllTasksForDate = async (date) => {
+        try {
+            const data = await fetchTasksForDate(date);
             setTasksForDate(data); // Guardamos las tareas para la fecha seleccionada
         } catch (error) {
             console.error('Error al obtener las tareas para la fecha seleccionada:', error);
         }
     };
 
-    // Cuando cambia la fecha seleccionada, obtenemos las tareas para esa fecha
+    // Manejar el cambio de fecha
     const handleDateChange = (date) => {
         setSelectedDate(date);
-        fetchTasksForDate(date);
+        getAllTasksForDate(date);
     };
 
     // Función para agregar una nueva tarea
     const handleTaskSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('token');
 
         try {
-            const response = await fetch(`${URL1}/api/tasks`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    ...newTask,
-                    dueDate: selectedDate,  // Se agrega la tarea a la fecha seleccionada
-                }),
-            });
-
-            if (response.ok) {
-                const createdTask = await response.json();
-                setTasksForDate([...tasksForDate, createdTask]);  // Agregamos la nueva tarea a la lista de tareas de esa fecha
+            const createATask = await addTask(newTask, selectedDate)
+            if (createATask && createATask._id) {
+                setTasksForDate([...tasksForDate, createATask]);  // Agregamos la nueva tarea a la lista de tareas de esa fecha
                 setNewTask({
                     title: '',
                     description: '',
                     priority: 'Medium',
                     notes: '',
                 });
+
                 alert('Tarea añadida correctamente');
             } else {
                 alert('Error al añadir la tarea');
@@ -94,77 +83,156 @@ const CalendarTask = () => {
         }
     };
 
-    // Muestra un punto en las fechas con tareas
-    const tileContent = ({ date, view }) => {
-        if (view === 'month') {
-            const hasTask = allTasks.some(task => {
-                const taskDate = new Date(task.dueDate);
-                return taskDate.toDateString() === date.toDateString();
-            });
+    // Función para obtener las tareas de una fecha
+    const getTasksForDate = (date) => {
+        return allTasks.filter(
+            (task) => new Date(task.dueDate).toDateString() === date.toDateString()
+        );
+    };
 
-            return hasTask ? <div className="dot"></div> : null;  // Un punto si hay tareas
+    // Manejo del evento de Drag & Drop
+    // Manejo del evento de Drag & Drop
+    const onDragEnd = (result) => {
+        const { destination } = result;
+        if (!destination) return;
+
+        const taskId = result.draggableId;
+        const newDate = new Date(destination.droppableId); // Asegúrate de que esto sea una fecha válida
+
+        const task = allTasks.find((task) => task._id === taskId);
+
+        if (task && newDate) {
+            const updatedTask = { ...task, dueDate: newDate };
+
+            // Actualiza la tarea en el estado local
+            setAllTasks((prevTasks) =>
+                prevTasks.map((t) => (t._id === taskId ? updatedTask : t))
+            );
+
+            // Llama a la función para actualizar en el backend
+            updateTask(updatedTask);
         }
     };
 
+    // Muestra los puntos de prioridad en el calendario
+    const getTileContent = ({ date, view }) => {
+        if (view === 'month') {
+            const dayTasks = getTasksForDate(date);
+
+            if (dayTasks.length > 0) {
+                const priorityTask = dayTasks.find(task => task.priority);
+                let color;
+
+                if (priorityTask) {
+                    switch (priorityTask.priority) {
+                        case 'High':
+                            color = 'red';
+                            break;
+                        case 'Medium':
+                            color = 'yellow';
+                            break;
+                        case 'Low':
+                            color = 'green';
+                            break;
+                        default:
+                            color = 'gray';
+                    }
+                }
+
+                return <div style={{ backgroundColor: color, height: '10px', width: '10px', borderRadius: '50%' }}></div>;
+            }
+        }
+        return null;
+    };
+
     useEffect(() => {
-        fetchAllTasks();  // Obtenemos todas las tareas al cargar el componente
+        fetchAllTasks();
+ // Obtenemos todas las tareas al cargar el componente
     }, []);
 
     return (
-        <div className='calendar-section'>  {/* Aplicamos la clase CSS aquí */}
-            <div className='calendar' >   {/* Nueva clase */}
-                <h1>Agendar Tareas en el Calendario</h1>
-                <Calendar onChange={handleDateChange} value={selectedDate} tileContent={tileContent} />
+        <div className='calendar-section'>
+            {/* Cambiar vista */}
+            <div>
+                <button onClick={() => setView('month')}>Vista Mensual</button>
+                <button onClick={() => setView('week')}>Vista Semanal</button>
+                <button onClick={() => setView('day')}>Vista Diaria</button>
             </div>
 
-            <div className="tasks-section">   {/* Nueva clase */}
-                <h3>Tareas para {selectedDate.toDateString()}</h3>
-                {tasksForDate.length > 0 ? (
-                    <ul>
-                        {tasksForDate.map(task => (
-                            <li key={task._id}>
-                                <strong>{task.title}</strong> - {task.priority} - {task.description}
-                            </li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No hay tareas para esta fecha.</p>
-                )}
-                <form onSubmit={handleTaskSubmit}>
-                    <input
-                        type="text"
-                        name="title"
-                        placeholder="Escribe la tarea"
-                        value={newTask.title}
-                        onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                        required
+            <DragDropContext onDragEnd={onDragEnd}>
+                <div className='calendar'>
+                    <h1>Agendar Tareas en el Calendario</h1>
+                    <Calendar
+                        onChange={handleDateChange}
+                        value={selectedDate}
+                        tileContent={getTileContent}
+                        view={view}
                     />
-                    <input
-                        type="text"
-                        name="description"
-                        placeholder="Descripción"
-                        value={newTask.description}
-                        onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                    />
-                    <select
-                        name="priority"
-                        value={newTask.priority}
-                        onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
-                    >
-                        <option value="Low">Baja</option>
-                        <option value="Medium">Media</option>
-                        <option value="High">Alta</option>
-                    </select>
-                    <input
-                        type="text"
-                        name="notes"
-                        placeholder="Notas adicionales"
-                        value={newTask.notes}
-                        onChange={(e) => setNewTask({ ...newTask, notes: e.target.value })}
-                    />
-                    <button type="submit">Añadir Tarea</button>
-                </form>
-            </div>
+                </div>
+
+                <div className="tasks-section">
+                    <h3>Tareas para {selectedDate.toDateString()}</h3>
+                    {tasksForDate.length > 0 ? (
+                        <Droppable droppableId={selectedDate.toISOString()}>
+                            {(provided) => (
+                                <ul  ref={provided.innerRef} {...provided.droppableProps}>
+                                    {tasksForDate.map((task, index) => (
+                                        <Draggable key={task._id} draggableId={task._id} index={index}>
+                                            {(provided) => (
+                                                <li className='drop'
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    {...provided.dragHandleProps}
+                                                    style={{ backgroundColor: 'lightgray', margin: '4px', padding: '8px', ...provided.draggableProps.style }}
+                                                >
+                                                    <strong>{task.title}</strong> - {task.priority} - {task.description}
+                                                </li>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </ul>
+                            )}
+                        </Droppable>
+                    ) : (
+                        <p>No hay tareas para esta fecha.</p>
+                    )}
+                    <form onSubmit={handleTaskSubmit}>
+                        <input
+                            type="text"
+                            name="title"
+                            placeholder="Escribe la tarea"
+                            value={newTask.title}
+                            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+                            required
+                        />
+                        <input
+                            type="text"
+                            name="description"
+                            placeholder="Descripción"
+                            value={newTask.description}
+                            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+                        />
+                        <select
+                            name="priority"
+                            value={newTask.priority}
+                            onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
+                        >
+                            <option value="Low">Baja</option>
+                            <option value="Medium">Media</option>
+                            <option value="High">Alta</option>
+                        </select>
+                        <input
+                            type="text"
+                            name="notes"
+                            placeholder="Notas adicionales"
+                            value={newTask.notes}
+                            onChange={(e) => setNewTask({ ...newTask, notes: e.target.value })}
+                        />
+                        <button type="submit">Añadir Tarea</button>
+                    </form>
+                </div>
+            </DragDropContext>
         </div>
     );
 };
