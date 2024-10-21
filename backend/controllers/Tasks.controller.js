@@ -21,8 +21,6 @@ export const createTask = async (req, res) => {
         await newTask.save();
 
 
-
-        console.log("newtast", newTask)
         res.status(201).json(newTask);
     } catch (error) {
         console.error('Error al crear la tarea:', error); // Para ver detalles del error
@@ -30,6 +28,37 @@ export const createTask = async (req, res) => {
     }
     
 };
+
+export const updateTask = async (req, res) => {
+  
+    const { title, description, dueDate, priority, notes } = req.body;
+
+
+    try {
+        // Busca la tarea por su ID
+        const task = await Task.findById(req.params.id);
+
+        if (!task) {
+            return res.status(404).json({ message: 'Task not found' });
+        }
+
+        // Actualiza los campos deseados
+        if (title) task.title = title;
+        if (description) task.description = description;
+        if (dueDate) task.dueDate = new Date(dueDate);
+        if (priority) task.priority = priority;
+        if (notes) task.notes = notes;
+
+        // Guarda los cambios en la base de datos
+        const updatedTask = await task.save();
+
+        res.status(200).json(updatedTask);
+    } catch (error) {
+        console.error('Error al actualizar la tarea:', error);
+        res.status(500).json({ message: 'Error al actualizar la tarea', error: error.message });
+    }
+};
+
 
 
 

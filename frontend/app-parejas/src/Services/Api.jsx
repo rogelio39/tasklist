@@ -68,6 +68,27 @@ export const createTask = async (task, selectedDate) => {
 // Actualizar una tarea existente
 export const updateTask = async (updatedTask) => {
     const token = localStorage.getItem("token");
+
+    const res = await fetch(`${URL1}/api/tasks/${updatedTask._id}`, {
+        method: "PATCH",
+        headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedTask),
+    });
+
+    if (!res.ok) {
+        throw new Error("Error updating task");
+    }
+
+    const data = await res.json();
+    return data;
+};
+
+export const updateTasksTatus = async (updatedTask) => {
+
+    const token = localStorage.getItem("token");
     const res = await fetch(`${URL1}/api/tasks/${updatedTask._id}`, {
         method: "PUT",
         headers: {

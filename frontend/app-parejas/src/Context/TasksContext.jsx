@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types"; // Importamos PropTypes
-import { fetchTasks, createTask, updateTask, deleteTask } from "../Services/Api";
+import { fetchTasks, createTask, updateTask, updateTasksTatus, deleteTask } from "../Services/Api";
 
 
 const TasksContext = createContext();
@@ -76,12 +76,23 @@ const TasksProvider = ({ children }) => {
         return newTask
     };
 
+    const modifyStatusTask = async (updatedTask) => {
+        const updated = await updateTasksTatus(updatedTask);
+        setTasks((prevTasks) =>
+            prevTasks.map((task) => (task.id === updatedTask._id ? updated : task))
+        );
+    };
+
     const modifyTask = async (updatedTask) => {
         const updated = await updateTask(updatedTask);
         setTasks((prevTasks) =>
             prevTasks.map((task) => (task.id === updatedTask._id ? updated : task))
         );
     };
+
+    
+
+    
 
 
 
@@ -96,6 +107,7 @@ const TasksProvider = ({ children }) => {
                 tasks,
                 addTask,
                 modifyTask,
+                modifyStatusTask,
                 removeTask,
                 updateTask,
                 loading,
