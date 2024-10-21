@@ -1,6 +1,35 @@
 
-form{
+.form{
     margin: auto;
-    margin-top: 20rem;
+    padding: 1rem;
     width: 50vw;
 }
+
+
+.login-container{
+    width: 60%;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    justify-content: center;
+    background-color: rgba(59, 251, 123, 0.895);
+    margin: auto;
+    border-radius: 10px;
+    padding: 1rem;
+    color: black;
+    font-weight:bold ;
+}
+
+.login-on{
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+p{
+    text-align: center;
+}
+

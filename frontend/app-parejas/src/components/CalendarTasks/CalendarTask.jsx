@@ -93,26 +93,39 @@ const CalendarTask = () => {
     // Manejo del evento de Drag & Drop
     // Manejo del evento de Drag & Drop
     const onDragEnd = (result) => {
-        const { destination } = result;
+        const { destination, draggableId } = result;
+        
+        // Verificamos si hay una destination (es decir, si se soltó en un área válida)
         if (!destination) return;
-
-        const taskId = result.draggableId;
-        const newDate = new Date(destination.droppableId); // Asegúrate de que esto sea una fecha válida
-
+    
+        // Obtenemos el ID de la tarea arrastrada
+        const taskId = draggableId;
+    
+        // Intentamos convertir el droppableId a una fecha
+        const newDate = new Date(destination.droppableId); 
+    
+        // Verificamos que la fecha sea válida
+        if (isNaN(newDate)) {
+            console.error('Fecha no válida');
+            return;
+        }
+    
+        // Buscamos la tarea correspondiente en el estado local
         const task = allTasks.find((task) => task._id === taskId);
-
+    
         if (task && newDate) {
             const updatedTask = { ...task, dueDate: newDate };
-
-            // Actualiza la tarea en el estado local
+    
+            // Actualizamos la tarea en el estado local
             setAllTasks((prevTasks) =>
                 prevTasks.map((t) => (t._id === taskId ? updatedTask : t))
             );
-
-            // Llama a la función para actualizar en el backend
+    
+            // Actualizamos la tarea en el backend
             updateTask(updatedTask);
         }
     };
+    
 
     // Muestra los puntos de prioridad en el calendario
     const getTileContent = ({ date, view }) => {
@@ -153,7 +166,7 @@ const CalendarTask = () => {
     return (
         <div className='calendar-section'>
             {/* Cambiar vista */}
-            <div>
+            <div className='button-container'>
                 <button onClick={() => setView('month')}>Vista Mensual</button>
                 <button onClick={() => setView('week')}>Vista Semanal</button>
                 <button onClick={() => setView('day')}>Vista Diaria</button>
@@ -161,7 +174,7 @@ const CalendarTask = () => {
 
             <DragDropContext onDragEnd={onDragEnd}>
                 <div className='calendar'>
-                    <h1>Agendar Tareas en el Calendario</h1>
+                    <h2>Agendar Tareas en el Calendario</h2>
                     <Calendar
                         onChange={handleDateChange}
                         value={selectedDate}

@@ -4,5 +4,11 @@
     align-items: center;
     gap: 0.5rem;
     height: 10vh;
+    border-bottom: 1px solid black;
+    margin-bottom: 1rem;
     
+}
+
+.nav-container button {
+    font-size: 0.8rem;
 }
