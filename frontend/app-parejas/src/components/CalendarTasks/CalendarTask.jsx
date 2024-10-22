@@ -17,7 +17,7 @@ const CalendarTask = () => {
     const [allTasks, setAllTasks] = useState([]);  // Almacena todas las tareas para marcar en el calendario
     const [view, setView] = useState('month'); // Estado para la vista (mensual/semanal/diaria)
     const { modifyTask, addTask } = useContext(TasksContext);
-
+    const [refreshKey, setRefreshKey] = useState(0);
     // Función para obtener todas las tareas
     const fetchAllTasks = async () => {
         try {
@@ -30,10 +30,10 @@ const CalendarTask = () => {
 
     const updateTask = async (updatedTask) => {
         try {
+
             const updateOk = await modifyTask(updatedTask);
-            console.log("updateOk", updateOk)
-            if (updateOk) {
-                console.log('Tarea actualizada:', updateOk);
+            if (updateOk === 'ok') {
+                console.log('ok');
             }
         } catch (error) {
             console.error('Error al actualizar la tarea:', error);
@@ -44,16 +44,17 @@ const CalendarTask = () => {
     const getAllTasksForDate = async (date) => {
         try {
             const data = await fetchTasksForDate(date);
-            console.log("data", data)
             setTasksForDate(data); // Guardamos las tareas para la fecha seleccionada
         } catch (error) {
             console.error('Error al obtener las tareas para la fecha seleccionada:', error);
         }
     };
 
-    const handleDateChange = (date) => {
+    const handleDateChange = async (date) => {
         setSelectedDate(date);
-        getAllTasksForDate(date);
+        setTasksForDate([]); // Reinicia las tareas cuando cambias de fecha
+        await getAllTasksForDate(date);
+        setRefreshKey(prevKey => prevKey + 1);
     };
 
     const handleTaskSubmit = async (e) => {
@@ -85,28 +86,44 @@ const CalendarTask = () => {
 
     const onDragEnd = async (result) => {
         const { destination, source, draggableId } = result;
+        console.log("result", result);
 
-        if (!destination) return;
-        if (destination.droppableId === source.droppableId && destination.index === source.index) return;
 
+        // Verificamos si no hay destino
+        if (!destination) {
+            console.error('No hay destino definido.');
+            return;
+        }
+
+        // Verificamos si el draggableId es válido
+        const task = allTasks.find((task) => task._id === draggableId);
+        if (!task) {
+            console.error('Tarea no encontrada:', draggableId);
+            return;
+        }
+
+        // Si el destino es el mismo que el origen, no hacemos nada
+        if (destination.droppableId === source.droppableId && destination.index === source.index) {
+            return;
+        }
+
+        // Convertimos el droppableId en fecha
         const newDate = new Date(destination.droppableId);
         if (isNaN(newDate)) {
             console.error('Fecha no válida');
             return;
         }
 
+        // Eliminamos la tarea de la fecha de origen
+        const updatedSourceTasks = tasksForDate.filter((t) => t._id !== draggableId);
+        setTasksForDate(updatedSourceTasks); // Actualiza el estado de la fecha de origen
 
+        // Actualizamos la tarea con la nueva fecha
+        const updatedTask = { ...task, dueDate: newDate };
+        await updateTask(updatedTask); // Actualiza la tarea en la base de datos
 
-        const task = allTasks.find((task) => task._id === draggableId);
-
-        if (task && newDate) {
-            const updatedTask = { ...task, dueDate: newDate };
-            setAllTasks((prevTasks) =>
-                prevTasks.map((t) => (t._id === task._id ? updatedTask : t))
-            );
-            await updateTask(updatedTask);
-            await getAllTasksForDate(newDate);
-        }
+        // Obtener y actualizar las tareas para la nueva fecha
+        await getAllTasksForDate(newDate); // Actualizamos las tareas en la fecha de destino
     };
 
     const getTileContent = ({ date, view }) => {
@@ -131,7 +148,7 @@ const CalendarTask = () => {
                     }
                 }
                 return (
-                    <Droppable droppableId={date.toISOString()}>
+                    <Droppable droppableId={date.toISOString()} key={date.toISOString()}>
                         {(provided) => (
                             <div
                                 ref={provided.innerRef}
@@ -146,11 +163,12 @@ const CalendarTask = () => {
                 );
             }
         }
-        return null;
+        return <div></div>;
     };
 
+
     useEffect(() => {
-        fetchAllTasks(); // Obtenemos todas las tareas al cargar el componente
+        fetchAllTasks();
     }, []);
 
     return (
@@ -162,7 +180,7 @@ const CalendarTask = () => {
             </div>
 
             <DragDropContext onDragEnd={onDragEnd}>
-                <div className='calendar'>
+                <div className='calendar' key={refreshKey} >
                     <h2>Agendar Tareas en el Calendario</h2>
                     <Calendar
                         onChange={handleDateChange}
@@ -174,7 +192,7 @@ const CalendarTask = () => {
 
                 <div className="tasks-section">
                     <h3>Tareas para {selectedDate.toDateString()}</h3>
-                    {tasksForDate.length > 0 ? (
+                    {tasksForDate && tasksForDate.length > 0 ? ( // Verificación aquí
                         <Droppable droppableId={selectedDate.toISOString()}>
                             {(provided) => (
                                 <ul ref={provided.innerRef} {...provided.droppableProps}>
@@ -202,11 +220,11 @@ const CalendarTask = () => {
                                 </ul>
                             )}
                         </Droppable>
-
                     ) : (
                         <p>No hay tareas para esta fecha</p>
                     )}
                 </div>
+
             </DragDropContext>
 
             <div className="add-task-form">

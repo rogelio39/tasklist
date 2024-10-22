@@ -82,8 +82,8 @@ export const updateTask = async (updatedTask) => {
         throw new Error("Error updating task");
     }
 
-    const data = await res.json();
-    return data;
+    await res.json();
+    return 'ok';
 };
 
 export const updateTasksTatus = async (updatedTask) => {
