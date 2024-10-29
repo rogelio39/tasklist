@@ -4,7 +4,6 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import UserRouter from './routes/Users.routes.js';
 import TaskRouter from './routes/Tasks.routes.js';
-import './services/cronJob.js';
 import EmailRouter from './routes/nodemail.routes.js';
 
 const app = express();
