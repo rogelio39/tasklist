@@ -22,7 +22,16 @@ export const fetchTasks = async () => {
     return data;
 };
 
-
+// Función para programar el recordatorio
+export const scheduleEmailReminder = async (email, task) => {
+    await fetch(`${URL1}/api/email/schedule-reminder`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email, task })
+    });
+};
 export const fetchTasksForDate = async (date) => {
     const token = localStorage.getItem('token');
     try {

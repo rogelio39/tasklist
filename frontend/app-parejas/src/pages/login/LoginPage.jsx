@@ -24,6 +24,7 @@ const LoginPage = () => {
         const data = await response.json();
         if (response.ok) {
             localStorage.setItem('token', data.token);
+            localStorage.setItem("user", data.email)
             navigate('/tabla');
         } else {
             console.error('Login failed');

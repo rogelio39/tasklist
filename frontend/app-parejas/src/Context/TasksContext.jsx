@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import PropTypes from "prop-types"; // Importamos PropTypes
-import { fetchTasks, createTask, updateTask, updateTasksTatus, deleteTask } from "../Services/Api";
+import { fetchTasks, createTask, updateTask, updateTasksTatus, deleteTask, scheduleEmailReminder } from "../Services/Api";
 
 
 const TasksContext = createContext();
@@ -95,6 +95,9 @@ const TasksProvider = ({ children }) => {
 
     
 
+    const sendEmail = async(email, task) => {
+        await scheduleEmailReminder(email, task)
+    }
 
 
     const removeTask = async (id) => {
@@ -111,6 +114,7 @@ const TasksProvider = ({ children }) => {
                 modifyStatusTask,
                 removeTask,
                 updateTask,
+                sendEmail,
                 loading,
                 error,
             }}
