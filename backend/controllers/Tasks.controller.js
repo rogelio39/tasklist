@@ -51,7 +51,6 @@ export const updateTask = async (req, res) => {
 
         // Guarda los cambios en la base de datos
         const updatedTask = await task.save();
-
         res.status(200).json(updatedTask);
     } catch (error) {
         console.error('Error al actualizar la tarea:', error);
@@ -88,7 +87,7 @@ export const deleteTask = async (req, res) => {
     if (task) {
         const deletedTask = await Task.findByIdAndDelete(req.params.id);
 
-        if (deleteTask) {
+        if (deletedTask) {
             res.json(deletedTask);
         }
     } else {

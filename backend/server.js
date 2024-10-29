@@ -4,6 +4,8 @@ import cors from 'cors';
 import connectDB from './config/db.js';
 import UserRouter from './routes/Users.routes.js';
 import TaskRouter from './routes/Tasks.routes.js';
+import './services/cronJob.js';
+import EmailRouter from './routes/nodemail.routes.js';
 
 const app = express();
 
@@ -30,6 +32,7 @@ connectDB();
 // Rutas
 app.use('/api/users', UserRouter);
 app.use('/api/tasks', TaskRouter);
+app.use('/api/email', EmailRouter)
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
