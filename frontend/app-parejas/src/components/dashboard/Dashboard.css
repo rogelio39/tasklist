@@ -44,6 +44,7 @@
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-bottom: 10px;
+    gap: 1rem;
 }
 
 .task-list .completed {
@@ -74,5 +75,20 @@
 
 
 .task-description{
-    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.task-description button {
+    max-width: 70%;
+    align-self: center;
+}
+
+.opened{
+    align-self: center;
+}
+
+.closed {
+    display: none;
 }
