@@ -9,6 +9,7 @@ import NavBar from './components/navBar/NavBar';
 import CalendarTask from './components/CalendarTasks/CalendarTask';
 import TaskStats from './components/TaskStats/TaskStats';
 import { TasksProvider } from './Context/TasksContext';
+import Home from './pages/Inicio/Home';
 // import TaskForm from './components/TaskForm/TaskForm';
 const App = () => {
   return (
@@ -25,7 +26,8 @@ const App = () => {
             <Route path="/stats" element={<PrivateRoute component={TaskStats} />} />
             {/* <Route path='/taskform' element={<TaskForm/>}/> */}
             {/* Ruta por defecto */}
-            <Route path="/" element={<Main />} />
+            <Route path="/" element={<Home />} />
+            <Route path="/main" element={<Main />} />
           </Routes>
         </div>
       </Router>

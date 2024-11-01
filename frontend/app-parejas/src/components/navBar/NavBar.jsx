@@ -4,13 +4,13 @@ const NavBar = () => {
 
     const navigate = useNavigate();
 
-    const goDashboard = () => {
-        navigate('/tabla');
-    }
 
 
 
     const goIndex = () => {
+        navigate('/main')
+    }
+    const goHome = () => {
         navigate('/')
     }
 
@@ -24,13 +24,14 @@ const NavBar = () => {
 
     return (
         <div className="nav-container">
-            <button onClick={goIndex}>Inicio</button>
+            <button onClick={goIndex}>Nosotros</button>
+            <button onClick={goHome}>Home</button>
             <button onClick={goToRegister}>registro</button>
             <button onClick={goToLogin}>Login</button>
-            <button onClick={goDashboard}>Tabla</button>
 
         </div>
     )
 }
 
 export default NavBar
+

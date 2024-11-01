@@ -10,5 +10,6 @@
 }
 
 .nav-container button {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
+    width: min-content;
 }

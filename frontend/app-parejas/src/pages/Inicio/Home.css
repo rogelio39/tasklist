@@ -1,0 +1,72 @@
+.home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background: #f4f4f9;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.app-title {
+    font-size: 2.5rem;
+    color: #3e89f3;
+}
+
+.app-tagline {
+    font-size: 1.2rem;
+    color: #777;
+    margin-top: 0.5rem;
+}
+
+.cta-button {
+    margin-top: 1rem;
+    padding: 0.7rem 1.5rem;
+    font-size: 1rem;
+    color: white;
+    background-color: #3e89f3;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.features {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 3rem;
+}
+
+.feature-item {
+    text-align: center;
+    max-width: 250px;
+}
+
+.feature-item h2 {
+    font-size: 1.5rem;
+    color: #3e89f3;
+}
+
+.feature-item p {
+    font-size: 1rem;
+    color: #555;
+}
+
+.image-section {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.app-image {
+    max-width: 80%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
