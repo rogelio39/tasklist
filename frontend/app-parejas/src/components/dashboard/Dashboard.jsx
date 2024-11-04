@@ -1,33 +1,27 @@
-import { useState, useEffect } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import './Dashboard.css'
-import { fetchTasks } from '../../Services/Api';
-// import { TasksContext } from '../../Context/TasksContext';
+// import { fetchTasks } from '../../Services/Api';
+import { TasksContext } from '../../Context/TasksContext';
 
 
 const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL
 const Dashboard = () => {
-    const [tasks, setTasks] = useState([]);
+    const [tasksState, setTasksState] = useState([]);
     const [newTask, setNewTask] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [view, setView] = useState(false)
-    // const {addTask} = useContext(TasksContext);
+    const {tasks} = useContext(TasksContext);
     // Fetch all tasks when component mounts
-    useEffect(() => {
-        const fetchAllTasks = async () => {
-            setLoading(true);
-            try {
-                const data = await fetchTasks()
-                setTasks(data);
-                setLoading(false);
-            } catch (error) {
-                setError(error.message);
-                setLoading(false);
-            }
-        };
 
-        fetchAllTasks();
-    }, []);
+
+    useEffect(() => {
+        setTasksState(tasks);
+        if(tasks){
+            setLoading(false);
+        }
+    },[tasks])
+
 
     // Function to add a new task
     const addTask = async () => {
@@ -50,7 +44,7 @@ const Dashboard = () => {
 
 
             const addedTask = await res.json();
-            setTasks((prevTasks) => [...prevTasks, addedTask]);
+            setTasksState((prevTasks) => [...prevTasks, addedTask]);
             setNewTask(''); // Clear input field
         } catch (error) {
             setError(error.message);
@@ -75,7 +69,7 @@ const Dashboard = () => {
             }
 
             const updatedTask = await res.json();
-            setTasks((prevTasks) =>
+            setTasksState((prevTasks) =>
                 prevTasks.map((task) => (task._id === taskId ? updatedTask : task))
             );
         } catch (error) {
@@ -99,7 +93,7 @@ const Dashboard = () => {
             }
 
             // Aquí simplemente eliminas la tarea del estado sin hacer fetch de la tarea eliminada
-            setTasks((prevTasks) =>
+            setTasksState((prevTasks) =>
                 prevTasks.filter((task) => task._id !== taskId)
             );
         } catch (error) {
@@ -154,7 +148,7 @@ const Dashboard = () => {
             </div>
 
             <ul className='task-list'>
-                {tasks.map((task) => (
+                {tasksState.map((task) => (
                     <li className={`${task.completed ? 'completed' : 'incompleted'}`} key={task._id}>
                         <h2>{task.title}</h2>
                         <button onClick={() => toggleViewInfo(task._id)}>
@@ -185,7 +179,6 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
 
 
 

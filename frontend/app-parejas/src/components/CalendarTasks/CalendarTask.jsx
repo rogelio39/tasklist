@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import Calendar from 'react-calendar';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'; // Librería actualizada
 import './CalendarTask.css';  // Asegúrate de que el archivo CSS esté importado
-import { fetchTasks, fetchTasksForDate } from '../../Services/Api';
+import { fetchTasksForDate } from '../../Services/Api';
 import { TasksContext } from '../../Context/TasksContext';
 
 
@@ -17,18 +17,19 @@ const CalendarTask = () => {
     });
     const [allTasks, setAllTasks] = useState([]);  // Almacena todas las tareas para marcar en el calendario
     const [view, setView] = useState('month'); // Estado para la vista (mensual/semanal/diaria)
-    const { modifyTask, addTask, sendEmail  } = useContext(TasksContext);
+    const { modifyTask, addTask, sendEmail, tasks  } = useContext(TasksContext);
     const [refreshKey, setRefreshKey] = useState(0);
     const userEmail = localStorage.getItem('user');
     // Función para obtener todas las tareas
-    const fetchAllTasks = async () => {
-        try {
-            const data = await fetchTasks();
-            setAllTasks(data); // Guardamos todas las tareas para procesar las fechas
-        } catch (error) {
-            console.error('Error al obtener todas las tareas:', error);
+
+    useEffect(() => {
+        try{
+            setAllTasks(tasks)
+        }catch(error){
+            console.error("Error al obtener todas las tareas: ", error);
         }
-    };
+
+    },[])
 
     const updateTask = async (updatedTask) => {
         try {
@@ -170,10 +171,6 @@ const CalendarTask = () => {
         return <div></div>;
     };
 
-
-    useEffect(() => {
-        fetchAllTasks();
-    }, []);
 
     return (
         <div className='calendar-section'>
