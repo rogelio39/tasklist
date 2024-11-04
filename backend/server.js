@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import UserRouter from './routes/Users.routes.js';
 import TaskRouter from './routes/Tasks.routes.js';
 import EmailRouter from './routes/nodemail.routes.js';
+// import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -21,6 +22,7 @@ const corsOptions = {
     },
     credentials: true
 }
+// app.use(cookieParser(process.env.SIGNED_COOKIE)) // La cookie esta firmada
 app.use(cors(corsOptions));
 app.use(express.json());
 
