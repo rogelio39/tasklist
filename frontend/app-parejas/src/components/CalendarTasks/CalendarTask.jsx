@@ -9,17 +9,11 @@ import { TasksContext } from '../../Context/TasksContext';
 const CalendarTask = () => {
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [tasksForDate, setTasksForDate] = useState([]);
-    const [newTask, setNewTask] = useState({
-        title: '',
-        description: '',
-        priority: 'Medium',
-        notes: ''
-    });
     const [allTasks, setAllTasks] = useState([]);  // Almacena todas las tareas para marcar en el calendario
     const [view, setView] = useState('month'); // Estado para la vista (mensual/semanal/diaria)
-    const { modifyTask, addTask, sendEmail, tasks  } = useContext(TasksContext);
+    const { modifyTask, tasks  } = useContext(TasksContext);
     const [refreshKey, setRefreshKey] = useState(0);
-    const userEmail = localStorage.getItem('user');
+
     // Función para obtener todas las tareas
 
     useEffect(() => {
@@ -60,28 +54,7 @@ const CalendarTask = () => {
         setRefreshKey(prevKey => prevKey + 1);
     };
 
-    const handleTaskSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            const createATask = await addTask(newTask, selectedDate);
-            if (createATask && createATask._id) {
-                setTasksForDate([...tasksForDate, createATask]);
-                setNewTask({
-                    title: '',
-                    description: '',
-                    priority: 'Medium',
-                    notes: '',
-                });
-                alert('Tarea añadida correctamente');
-                  // Aquí puedes hacer una llamada a tu backend para programar el recordatorio
-            await sendEmail(userEmail, createATask); // Asegúrate de que la tarea tenga el email del usuario
-            } else {
-                alert('Error al añadir la tarea');
-            }
-        } catch (error) {
-            console.error('Error al agregar la tarea:', error);
-        }
-    };
+
 
     const getTasksForDate = (date) => {
         return allTasks.filter(
@@ -177,7 +150,7 @@ const CalendarTask = () => {
             <div className='button-container'>
                 <button onClick={() => setView('month')}>Vista Mensual</button>
                 <button onClick={() => setView('week')}>Vista Semanal</button>
-                <button onClick={() => setView('day')}>Vista Diaria</button>
+                <button onClick={() => setView('day')}>Vista Diaria</button>    
             </div>
 
             <DragDropContext onDragEnd={onDragEnd}>
@@ -228,38 +201,7 @@ const CalendarTask = () => {
 
             </DragDropContext>
 
-            <div className="add-task-form">
-                <h2>Añadir Nueva Tarea</h2>
-                <form onSubmit={handleTaskSubmit}>
-                    <input
-                        type='text'
-                        value={newTask.title}
-                        onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-                        placeholder='Título'
-                        required
-                    />
-                    <textarea
-                        value={newTask.description}
-                        onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-                        placeholder='Descripción'
-                        required
-                    />
-                    <select
-                        value={newTask.priority}
-                        onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
-                    >
-                        <option value='High'>Alta</option>
-                        <option value='Medium'>Media</option>
-                        <option value='Low'>Baja</option>
-                    </select>
-                    <textarea
-                        value={newTask.notes}
-                        onChange={(e) => setNewTask({ ...newTask, notes: e.target.value })}
-                        placeholder='Notas'
-                    />
-                    <button type='submit'>Agregar Tarea</button>
-                </form>
-            </div>
+         
         </div>
     );
 };

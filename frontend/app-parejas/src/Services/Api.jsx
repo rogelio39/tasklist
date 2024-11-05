@@ -53,7 +53,8 @@ export const fetchTasksForDate = async (date) => {
 
 
 // Crear nueva tarea
-export const createTask = async (task, selectedDate) => {
+export const createTask = async (task) => {
+
 
     const token = localStorage.getItem("token");
     const res = await fetch(`${URL1}/api/tasks`, {
@@ -62,8 +63,7 @@ export const createTask = async (task, selectedDate) => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({...task, 
-            dueDate: selectedDate}),
+        body: JSON.stringify(task),
     });
 
     if (!res.ok) {
@@ -129,4 +129,7 @@ export const deleteTask = async (id) => {
     if (!res.ok) {
         throw new Error("Error deleting task");
     }
+
+    const data = await res.json();
+    return data;
 };

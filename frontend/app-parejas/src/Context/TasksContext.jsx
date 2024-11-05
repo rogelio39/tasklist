@@ -70,8 +70,9 @@ const TasksProvider = ({ children }) => {
         return task;
     };
 
-    const addTask = async (task, selectedDate) => {
-        const newTask = await createTask(task, selectedDate);
+    const addTask = async (task) => {
+
+        const newTask = await createTask(task);
         setTasks((prevTasks) => [...prevTasks, newTask]);
         return newTask
     };
@@ -79,14 +80,14 @@ const TasksProvider = ({ children }) => {
     const modifyStatusTask = async (updatedTask) => {
         const updated = await updateTasksTatus(updatedTask);
         setTasks((prevTasks) =>
-            prevTasks.map((task) => (task.id === updatedTask._id ? updated : task))
+            prevTasks.map((task) => (task._id === updatedTask._id ? updated : task))
         );
     };
 
     const modifyTask = async (updatedTask) => {
         const updated = await updateTask(updatedTask);
         setTasks((prevTasks) =>
-            prevTasks.map((task) => (task.id === updatedTask._id ? updated : task))
+            prevTasks.map((task) => (task._id === updatedTask._id ? updated : task))
         );
         return 'ok'
     };
@@ -101,8 +102,9 @@ const TasksProvider = ({ children }) => {
 
 
     const removeTask = async (id) => {
-        await deleteTask(id);
-        setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+        const data = await deleteTask(id);
+        setTasks((prevTasks) => prevTasks.filter((task) => task._id !== id));
+        return data
     };
 
     return (
