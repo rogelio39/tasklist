@@ -70,7 +70,10 @@ const FormTask = () => {
                     <input
                         type='date'
                         value={newTask.dueDate}
-                        onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
+                        onChange={(e) => {
+                            setNewTask({ ...newTask, dueDate: e.target.value });
+                        }}
+                        
                         placeholder='Fecha de vencimiento'
                     />
                     <textarea

@@ -10,7 +10,7 @@ export const createTask = async (req, res) => {
         const newTask = new Task({
             title,
             description,
-            dueDate: dueDate ? new Date(dueDate) : null,
+            dueDate: dueDate ? new Date(`${dueDate}T00:00:00-03:00`) : null,
             priority: priority || 'Medium', 
             notes,
             createdBy: req.user._id, 
