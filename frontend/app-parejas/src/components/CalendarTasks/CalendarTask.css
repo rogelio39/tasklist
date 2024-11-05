@@ -1,3 +1,29 @@
+
+.react-calendar__tile {
+    height: 60px; /* Ajusta el tamaño según prefieras */
+    width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px; /* Agrega un borde suave como en Google Calendar */
+    transition: background-color 0.3s ease; /* Animación suave para fondo */
+}
+
+.react-calendar__tile--selected {
+    background-color: #08ef60fb; /* Color para la fecha seleccionada */
+    color: white; /* Color del texto */
+}
+
+.react-calendar__tile--now {
+    color: black;
+    background-color: #85f78de8; /* Color de fondo para el día actual */
+}
+
+.react-calendar__tile:hover {
+    background-color: #d3d3d3; /* Efecto hover */
+}
+
+
 .calendar-section {
     display: flex;
     flex-direction: column;
@@ -12,7 +38,7 @@
 
 .calendar {
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -20,7 +46,7 @@
 
 .tasks-section {
     width: 100%;
-    padding: 20px;
+    padding: 10px;
     background-color: white;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -38,22 +64,9 @@ ul {
 }
 
 
-form {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-input, select {
-    padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
 
 button {
-    padding: 10px;
+    padding: 0.8rem;
     font-size: 1rem;
     background-color: #007bff;
     color: white;
@@ -69,12 +82,13 @@ button:hover {
 }
 
 .dot {
-    height: 8px;
-    width: 8px;
+    height: 100px; /* Aumenta el tamaño del punto */
+    width: 100px;
     background-color: red;
     border-radius: 50%;
     display: inline-block;
 }
+
 
 
 .button-container{

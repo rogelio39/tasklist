@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { TasksContext } from "../../Context/TasksContext";
+import './FormTask.css'
 const FormTask = () => {
 
     const { addTask } = useContext(TasksContext);

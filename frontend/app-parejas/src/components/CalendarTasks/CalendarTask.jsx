@@ -25,6 +25,17 @@ const CalendarTask = () => {
 
     },[])
 
+
+    const tileClassName = ({ date }) => {
+        const isSelected = date.toDateString() === selectedDate.toDateString(); // Verifica si la fecha es la seleccionada
+        const isToday = date.toDateString() === new Date().toDateString(); // Verifica si la fecha es hoy
+    
+        return (
+            (isSelected ? 'react-calendar__tile--selected' : '') +
+            (isToday ? ' react-calendar__tile--now' : '')
+        );
+    };
+    
     const updateTask = async (updatedTask) => {
         try {
 
@@ -131,19 +142,38 @@ const CalendarTask = () => {
                             <div
                                 ref={provided.innerRef}
                                 {...provided.droppableProps}
-                                style={{ backgroundColor: color, height: '10px', width: '10px', borderRadius: '50%' }}
+                                style={{
+                                    backgroundColor: color,
+                                    height: '60px', // Mantiene la altura
+                                    width: '60px',  // Mantiene el ancho
+                                    display: 'flex',
+                                    alignItems: 'flex-end', // Cambia a flex-end para que el punto esté más arriba
+                                    justifyContent: 'center',
+                                    position: 'relative', // Permite un mejor control del contenido
+                                }}
                                 className='droppable'
                             >
+                                <div
+                                    style={{
+                                        height: '10px', // Ajusta aquí
+                                        width: '10px',
+                                        backgroundColor: color,
+                                        borderRadius: '50%',
+                                        position: 'absolute',
+                                        bottom: '5px', // Ajusta la posición si es necesario
+                                    }}
+                                />
                                 {provided.placeholder}
                             </div>
                         )}
                     </Droppable>
                 );
+                
             }
         }
         return <div></div>;
     };
-
+    
 
     return (
         <div className='calendar-section'>
@@ -160,6 +190,7 @@ const CalendarTask = () => {
                         onChange={handleDateChange}
                         value={selectedDate}
                         tileContent={getTileContent}
+                        tileClassName={tileClassName}
                         view={view}
                     />
                 </div>
@@ -201,7 +232,7 @@ const CalendarTask = () => {
 
             </DragDropContext>
 
-         
+
         </div>
     );
 };
