@@ -2,16 +2,17 @@ import { useState, useContext, useEffect } from 'react';
 import './Dashboard.css';
 import { TasksContext } from '../../Context/TasksContext';
 import FormTask from '../formTask/FormTask';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
 const Dashboard = () => {
     const [tasksState, setTasksState] = useState([]);
-
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [view, setView] = useState(false);
+    const [deletingTask, setDeletingTask] = useState(null); // Estado para la animación de eliminación
     const { tasks, removeTask } = useContext(TasksContext);
 
     useEffect(() => {
@@ -64,43 +65,61 @@ const Dashboard = () => {
             setTasksState((prevTasks) =>
                 prevTasks.map((task) => (task._id === taskId ? updatedTask : task))
             );
+            toast.success('Tarea marcada como completada'); // Muestra mensaje de éxito
         } catch (error) {
             setError(error.message);
+            toast.error('Error al marcar tarea como completada'); // Muestra mensaje de error
         }
     };
 
     const deleteTask = async (taskId) => {
         try {
-
-            const removedTask = await removeTask(taskId);
-            if (removedTask) {
-                // Aquí simplemente eliminas la tarea del estado sin hacer fetch de la tarea eliminada
-                setTasksState((prevTasks) =>
-                    prevTasks.filter((task) => task._id !== taskId)
-                );
-            }
-
+            setDeletingTask(taskId);
+            setTimeout(async () => {
+                const removedTask = await removeTask(taskId);
+                if (removedTask) {
+                    setTasksState((prevTasks) =>
+                        prevTasks.filter((task) => task._id !== taskId)
+                    );
+                    toast.success('Tarea eliminada correctamente'); // Muestra mensaje de éxito
+                    setDeletingTask(null);
+                }
+            }, 500);
         } catch (error) {
             setError(error.message);
+            toast.error('Error al eliminar tarea'); // Muestra mensaje de error
         }
     };
 
-
+    const handleSwipe = (taskId) => {
+        deleteTask(taskId); // Elimina la tarea si se desliza a la derecha
+    };
 
     return (
         <div className='dashboard-container'>
             <h1>Dashboard de Tareas</h1>
-
             <FormTask/>
-
+            <div className="swipe-message">
+                <p>Desliza a la derecha para eliminar</p>
+                <div className="swipe-icon"></div> {/* Icono animado */}
+            </div>
+            <ToastContainer /> {/* Asegúrate de tener este contenedor para que se muestren las notificaciones */}
             <ul className='task-list'>
                 {tasksState.map((task) => (
-                    <li className={`${task.completed ? 'completed' : 'incompleted'}`} key={task._id}>
+                    <li 
+                        className={`${task.completed ? 'completed' : 'incompleted'} ${deletingTask === task._id ? 'deleting' : ''}`} 
+                        key={task._id}
+                        onTouchStart={(e) => (e.target.swipeStart = e.touches[0].clientX)}
+                        onTouchEnd={(e) => {
+                            if (e.target.swipeStart - e.changedTouches[0].clientX > 50) {
+                                handleSwipe(task._id);
+                            }
+                        }}
+                    >
                         <h2>{task.title}</h2>
                         <button onClick={() => toggleViewInfo(task._id)}>
                             {view[task._id] ? 'x' : 'ver tarea'}
                         </button>
-
                         <div className={`task-description ${view[task._id] ? 'opened' : 'closed'}`}>
                             <span><h4>Titulo:</h4><p>{task.title}</p></span>
                             <span><h4>Description:</h4><p>{task.description}</p></span>
@@ -124,5 +143,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
-// Function to mark a task as completed

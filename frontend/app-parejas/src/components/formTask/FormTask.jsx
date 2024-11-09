@@ -1,12 +1,14 @@
 import { useState, useContext } from "react";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { TasksContext } from "../../Context/TasksContext";
-import './FormTask.css'
-const FormTask = () => {
+import './FormTask.css';
 
-    const { addTask } = useContext(TasksContext);
+const FormTask = () => {
+    const email = localStorage.getItem('user');
+    const { addTask, sendEmail } = useContext(TasksContext);
     const [tasksState, setTasksState] = useState([]);
     const [error, setError] = useState(null);
-
     const [newTask, setNewTask] = useState({
         title: '',
         description: '',
@@ -15,15 +17,10 @@ const FormTask = () => {
         dueDate: ''
     });
 
-
-    if (error) {
-        return <p>Error: {error}</p>;
-    }
-
     const handleTaskSubmit = async (e) => {
         e.preventDefault();
         try {
-            const createATask = await addTask(newTask)
+            const createATask = await addTask(newTask);
             setTasksState([...tasksState, createATask]);
             setNewTask({
                 title: '',
@@ -32,18 +29,18 @@ const FormTask = () => {
                 notes: '',
                 dueDate: ''
             });
-            alert('Tarea añadida correctamente');
+            await sendEmail(email, newTask);
+            toast.success('Tarea añadida correctamente');
         } catch (error) {
             console.error('Error al agregar la tarea:', error);
             setError(error.message);
+            toast.error('Error al agregar la tarea');
         }
     };
 
-
-
     return (
         <div>
-
+            <ToastContainer />
             <div className="add-task-form">
                 <h2>Añadir Nueva Tarea</h2>
                 <form onSubmit={handleTaskSubmit}>
@@ -71,10 +68,7 @@ const FormTask = () => {
                     <input
                         type='date'
                         value={newTask.dueDate}
-                        onChange={(e) => {
-                            setNewTask({ ...newTask, dueDate: e.target.value });
-                        }}
-                        
+                        onChange={(e) => setNewTask({ ...newTask, dueDate: e.target.value })}
                         placeholder='Fecha de vencimiento'
                     />
                     <textarea
@@ -83,11 +77,13 @@ const FormTask = () => {
                         placeholder='Notas'
                     />
                     <button type='submit'>Agregar Tarea</button>
+                    {
+                        error && <div>{error}</div>
+                    }
                 </form>
             </div>
-
         </div>
-    )
-}
+    );
+};
 
-export default FormTask
+export default FormTask;

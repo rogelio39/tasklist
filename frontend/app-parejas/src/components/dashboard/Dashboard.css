@@ -1,94 +1,83 @@
+/* Dashboard.css */
+
 .dashboard-container {
     padding: 20px;
-    background-color: #f9f9f9;
 }
 
-.dashboard-container h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-}
-
-.dashboard-container input {
-    padding: 10px;
-    margin-right: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
-.dashboard-container button {
-    padding: 10px 15px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.dashboard-container button:hover {
-    background-color: #218838;
-}
 
 .task-list {
-    margin-top: 20px;
     list-style-type: none;
-    padding-left: 0;
+    padding: 0;
 }
 
-.task-list li {
+li {
+    background-color: #f9f9f9;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    transition: transform 0.3s;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    padding: 10px;
-    background-color: #fff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    gap: 1rem;
 }
 
-.task-list .completed {
-    color: rgb(226, 226, 226);
-    background-color: #74f191;
+li.incompleted {
+    border-left: 5px solid #ff0000;
 }
 
-.task-list .incompleted {
-    color: black;
-    background-color: rgb(255, 168, 168);
-}
-
-.task-list button {
-    margin-left: 10px;
-    background-color: #007bff;
-    border: none;
-    padding: 5px 10px;
+li.completed {
+    border-left: 5px solid #00ff00;
     color: white;
-    border-radius: 5px;
-    cursor: pointer;
-    height: fit-content;
-    text-decoration: none;
 }
 
-.task-list button:hover {
-    background-color: #0056b3;
+li.deleting {
+    animation: fade-out 0.8s ease forwards;
+    opacity: 0;
 }
 
-
-.task-description{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+@keyframes fade-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
 }
 
-.task-description button {
-    max-width: 70%;
-    align-self: center;
-}
-
-.opened{
-    align-self: center;
-}
-
-.closed {
+.task-description {
     display: none;
+}
+
+.task-description.opened {
+    display: block;
+    margin-top: 10px;
+}
+
+
+/* Dashboard.css */
+
+.swipe-message {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 1em;
+    color: #333;
+}
+
+.swipe-icon {
+    width: 20px;
+    height: 20px;
+    margin-left: 10px;
+    background: url('/path-to-your-hand-icon.png') no-repeat center;
+    background-size: contain;
+    animation: swipeAnimation 1s ease infinite;
+}
+
+@keyframes swipeAnimation {
+    0% { transform: translateX(0); }
+    50% { transform: translateX(10px); }
+    100% { transform: translateX(0); }
 }
