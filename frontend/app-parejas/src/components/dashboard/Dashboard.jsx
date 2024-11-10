@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from 'react';
 import './Dashboard.css';
 import { TasksContext } from '../../Context/TasksContext';
 import FormTask from '../formTask/FormTask';
-import { ToastContainer, toast } from 'react-toastify';
+import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL;
@@ -103,7 +103,6 @@ const Dashboard = () => {
                 <p>Desliza a la derecha para eliminar</p>
                 <i className="fa-solid fa-hand-point-left"></i>
             </div>
-            <ToastContainer /> {/* Asegúrate de tener este contenedor para que se muestren las notificaciones */}
             <ul className='task-list'>
                 {tasksState.map((task) => (
                     <li 

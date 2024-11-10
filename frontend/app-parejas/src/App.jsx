@@ -10,6 +10,7 @@ import CalendarTask from './components/CalendarTasks/CalendarTask';
 import TaskStats from './components/TaskStats/TaskStats';
 import { TasksProvider } from './Context/TasksContext';
 import Home from './pages/Inicio/Home';
+import {  ToastContainer } from 'react-toastify';
 // import TaskForm from './components/TaskForm/TaskForm';
 const App = () => {
   return (
@@ -17,6 +18,7 @@ const App = () => {
       <Router>
         <div className="app">
           <NavBar />
+          <ToastContainer /> {/* Asegúrate de tener este contenedor para que se muestren las notificaciones */}
           <Routes>
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
