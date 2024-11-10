@@ -101,7 +101,7 @@ const Dashboard = () => {
             <FormTask/>
             <div className="swipe-message">
                 <p>Desliza a la derecha para eliminar</p>
-                <i class="fa-solid fa-hand-point-left"></i>
+                <i className="fa-solid fa-hand-point-left"></i>
             </div>
             <ToastContainer /> {/* Asegúrate de tener este contenedor para que se muestren las notificaciones */}
             <ul className='task-list'>

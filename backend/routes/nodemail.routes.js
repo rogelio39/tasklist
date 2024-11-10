@@ -1,6 +1,6 @@
 // routes.js (o el archivo donde tengas tus rutas)
 import express from 'express';
-import { scheduleEmailReminder } from '../controllers/reminderController.js';
+import { scheduleEmailReminder } from '../controllers/reminder.controller.js';
 
 const EmailRouter = express.Router();
 
