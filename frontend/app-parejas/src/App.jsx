@@ -30,6 +30,7 @@ const App = () => {
             {/* Ruta por defecto */}
             <Route path="/" element={<Home />} />
             <Route path="/main" element={<Main />} />
+
           </Routes>
         </div>
       </Router>
