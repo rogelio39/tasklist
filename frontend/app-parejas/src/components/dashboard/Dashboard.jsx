@@ -2,7 +2,7 @@ import { useState, useContext, useEffect } from 'react';
 import './Dashboard.css';
 import { TasksContext } from '../../Context/TasksContext';
 import FormTask from '../formTask/FormTask';
-import {  toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL;
@@ -23,6 +23,7 @@ const Dashboard = () => {
     }, [tasks]);
 
     const formatDate = (dateString) => {
+        if (!dateString) return 'No tiene fecha para cumplirse'; 
         const date = new Date(dateString);
         const day = String(date.getDate()).padStart(2, '0');
         const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -95,6 +96,23 @@ const Dashboard = () => {
         deleteTask(taskId); // Elimina la tarea si se desliza a la derecha
     };
 
+    // Agrupar las tareas por fecha
+    const groupByDate = (tasks) => {
+        return tasks.reduce((acc, task) => {
+            const formattedDate = formatDate(task.dueDate);
+            if (!acc[formattedDate]) {
+                acc[formattedDate] = [];
+            }
+            acc[formattedDate].push(task);
+            return acc;
+        }, {});
+    };
+
+
+
+    const groupedTasks = groupByDate(tasksState);
+
+
     return (
         <div className='dashboard-container'>
             <h1>Dashboard de Tareas</h1>
@@ -103,40 +121,46 @@ const Dashboard = () => {
                 <p>Desliza a la derecha para eliminar</p>
                 <i className="fa-solid fa-hand-point-left"></i>
             </div>
-            <ul className='task-list'>
-                {tasksState.map((task) => (
-                    <li 
-                        className={`${task.completed ? 'completed' : 'incompleted'} ${deletingTask === task._id ? 'deleting' : ''}`} 
-                        key={task._id}
-                        onTouchStart={(e) => (e.target.swipeStart = e.touches[0].clientX)}
-                        onTouchEnd={(e) => {
-                            if (e.target.swipeStart - e.changedTouches[0].clientX > 50) {
-                                handleSwipe(task._id);
-                            }
-                        }}
-                    >
-                        <h2>{task.title}</h2>
-                        <button onClick={() => toggleViewInfo(task._id)}>
-                            {view[task._id] ? 'x' : 'ver tarea'}
-                        </button>
-                        <div className={`task-description ${view[task._id] ? 'opened' : 'closed'}`}>
-                            <span><h4>Titulo:</h4><p>{task.title}</p></span>
-                            <span><h4>Description:</h4><p>{task.description}</p></span>
-                            <span><h4>Fecha:</h4><p>{task.dueDate ? formatDate(task.dueDate) : 'No tiene fecha para cumplirse'}</p></span>
-                            <span><h4>Prioridad:</h4><p>{task.priority}</p></span>
-                            <span><h4>Notas adicionales:</h4><p>{task.notes}</p></span>
-                            <span><h4>Estado:</h4><p>{task.completed ? 'Completada' : 'Pendiente'}</p></span>
-                            {!task.completed ? (
-                                <button onClick={() => completeTask(task._id)}>
-                                    Marcar como Completada
+
+            {Object.keys(groupedTasks).map((date) => (
+                <div key={date}>
+                    <h2>{date}</h2>
+                    <ul className='task-list'>
+                        {groupedTasks[date].map((task) => (
+                            <li 
+                                className={`${task.completed ? 'completed' : 'incompleted'} ${deletingTask === task._id ? 'deleting' : ''}`} 
+                                key={task._id}
+                                onTouchStart={(e) => (e.target.swipeStart = e.touches[0].clientX)}
+                                onTouchEnd={(e) => {
+                                    if (e.target.swipeStart - e.changedTouches[0].clientX > 50) {
+                                        handleSwipe(task._id);
+                                    }
+                                }}
+                            >
+                                <h2>{task.title}</h2>
+                                <button onClick={() => toggleViewInfo(task._id)}>
+                                    {view[task._id] ? 'x' : 'ver tarea'}
                                 </button>
-                            ) : (
-                                <button onClick={() => deleteTask(task._id)}>Eliminar Tarea</button>
-                            )}
-                        </div>
-                    </li>
-                ))}
-            </ul>
+                                <div className={`task-description ${view[task._id] ? 'opened' : 'closed'}`}>
+                                    <span><h4>Titulo:</h4><p>{task.title}</p></span>
+                                    <span><h4>Description:</h4><p>{task.description}</p></span>
+                                    <span><h4>Fecha:</h4><p>{task.dueDate ? formatDate(task.dueDate) : 'No tiene fecha para cumplirse'}</p></span>
+                                    <span><h4>Prioridad:</h4><p>{task.priority}</p></span>
+                                    <span><h4>Notas adicionales:</h4><p>{task.notes}</p></span>
+                                    <span><h4>Estado:</h4><p>{task.completed ? 'Completada' : 'Pendiente'}</p></span>
+                                    {!task.completed ? (
+                                        <button onClick={() => completeTask(task._id)}>
+                                            Marcar como Completada
+                                        </button>
+                                    ) : (
+                                        <button onClick={() => deleteTask(task._id)}>Eliminar Tarea</button>
+                                    )}
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ))}
         </div>
     );
 };
