@@ -26,6 +26,12 @@ const corsOptions = {
 }
 // app.use(cookieParser(process.env.SIGNED_COOKIE)) // La cookie esta firmada
 app.use(cors(corsOptions));
+app.use((req, res, next) => {
+    res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+    res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+    next();
+});
+
 app.use(express.json());
 app.use(session({ secret: process.env.YOUR_SECRET, resave: false, saveUninitialized: false }));
 app.use(passport.initialize());
