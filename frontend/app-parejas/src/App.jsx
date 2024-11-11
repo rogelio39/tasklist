@@ -11,6 +11,7 @@ import TaskStats from './components/TaskStats/TaskStats';
 import { TasksProvider } from './Context/TasksContext';
 import Home from './pages/Inicio/Home';
 import {  ToastContainer } from 'react-toastify';
+import LoginGoogle from './pages/login-google/LoginGoogle';
 // import TaskForm from './components/TaskForm/TaskForm';
 const App = () => {
   return (
@@ -21,6 +22,7 @@ const App = () => {
           <ToastContainer /> {/* Asegúrate de tener este contenedor para que se muestren las notificaciones */}
           <Routes>
             <Route path="/login" element={<LoginPage />} />
+            <Route path='/google/auth' element={<LoginGoogle/>} />
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/tabla" element={<PrivateRoute component={Dashboard} />} />
             <Route path="/tasks" element={<PrivateRoute component={TaskList} />} />

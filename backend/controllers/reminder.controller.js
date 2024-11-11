@@ -9,9 +9,9 @@ export const scheduleEmailReminder = async (req, res) => {
     const jobKey = `${email}-${task.dueDate}`; // Crea una clave única para el trabajo
 
     try {
+        // Configurar la fecha para el inicio del día (00:01) de la fecha de vencimiento
         const taskDate = new Date(task.dueDate);
-        taskDate.setDate(taskDate.getDate() - 1);
-        taskDate.setHours(0, 1, 0, 0);
+        taskDate.setHours(0, 1, 0, 0); // 00:01 del día de vencimiento
 
         // Si ya hay un trabajo programado para esta tarea y usuario, cancélalo antes de crear uno nuevo
         if (scheduledJobs[jobKey]) {

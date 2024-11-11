@@ -5,6 +5,8 @@ import connectDB from './config/db.js';
 import UserRouter from './routes/Users.routes.js';
 import TaskRouter from './routes/Tasks.routes.js';
 import EmailRouter from './routes/nodemail.routes.js';
+import passport from 'passport';
+import session from 'express-session';
 // import cookieParser from 'cookie-parser';
 
 const app = express();
@@ -25,6 +27,9 @@ const corsOptions = {
 // app.use(cookieParser(process.env.SIGNED_COOKIE)) // La cookie esta firmada
 app.use(cors(corsOptions));
 app.use(express.json());
+app.use(session({ secret: process.env.YOUR_SECRET, resave: false, saveUninitialized: false }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Conexión a la base de datos
 connectDB();
