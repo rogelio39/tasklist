@@ -3,8 +3,6 @@ import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 const clientID = import.meta.env.VITE_REACT_APP_GOOGLE_CLIENT_ID || '521799423975-mftsdt4hfg5rgqo38k7c2v82o7nog0c9.apps.googleusercontent.com';
 const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
-
-console.log(`${URL1}/auth/google`)
 const LoginGoogle = () => {
     const handleSuccess = async (credentialResponse) => {
         try {

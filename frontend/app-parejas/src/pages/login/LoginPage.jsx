@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import './LoginPage.css'
 import { useNavigate } from 'react-router-dom';
+import LoginGoogle from '../login-google/LoginGoogle';
 const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,26 +40,33 @@ const LoginPage = () => {
 
     return (
         <div className='login-container'>
-        {
-            !token ?  <form className='form' onSubmit={submitHandler}>
-            <input
-                type="email"
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            <button type="submit">Login</button>
-        </form> : <div className='login-on'>
-            <p>Ya te encuentras logueado</p>
-            <button onClick={logout}>Cerrar sesion</button>
-        </div>
-        }
+            {
+                !token ?
+                    <>
+                        <h2>Si tienes cuenta, ingresa aqui</h2>
+                        <form className='form' onSubmit={submitHandler}>
+                            <input
+                                type="email"
+                                placeholder="Email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                            />
+                            <input
+                                type="password"
+                                placeholder="Password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                            />
+                            <button type="submit">Login</button>
+                        </form>
+                        <h2>Inicia sesion con google</h2>
+                        <LoginGoogle />
+                    </>
+                    : <div className='login-on'>
+                        <p>Ya te encuentras logueado</p>
+                        <button onClick={logout}>Cerrar sesion</button>
+                    </div>
+            }
         </div>
     );
 };
