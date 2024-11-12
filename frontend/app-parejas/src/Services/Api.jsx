@@ -133,3 +133,30 @@ export const deleteTask = async (id) => {
     const data = await res.json();
     return data;
 };
+
+
+
+//AUTH API
+
+export const Login = async (credentialResponse) => {
+    try {
+        const response = await fetch(`${URL1}/api/users/auth/google`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ token: credentialResponse.credential })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+            localStorage.setItem('token', data.token); // Token de tu backend
+            console.log('Inicio de sesión exitoso');
+            return data.token
+        } else {
+            console.log('Error en el inicio de sesión:', data.message);
+        }
+    } catch (error) {
+        console.error('Error en la autenticación:', error);
+    }
+};

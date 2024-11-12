@@ -1,12 +1,12 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { TasksContext } from "../../Context/TasksContext";
+import { useTaskContext } from "../../Context/TasksContext";
 import './FormTask.css';
 
 const FormTask = () => {
     const email = localStorage.getItem('user');
-    const { addTask, sendEmail } = useContext(TasksContext);
+    const { addTask, sendEmail } = useTaskContext();
     const [tasksState, setTasksState] = useState([]);
     const [error, setError] = useState(null);
     const [newTask, setNewTask] = useState({

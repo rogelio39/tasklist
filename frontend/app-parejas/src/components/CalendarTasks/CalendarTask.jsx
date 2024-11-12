@@ -1,9 +1,9 @@
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import Calendar from 'react-calendar';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd'; // Librería actualizada
 import './CalendarTask.css';  // Asegúrate de que el archivo CSS esté importado
 import { fetchTasksForDate } from '../../Services/Api';
-import { TasksContext } from '../../Context/TasksContext';
+import { useTaskContext } from '../../Context/TasksContext';
 
 
 const CalendarTask = () => {
@@ -11,7 +11,7 @@ const CalendarTask = () => {
     const [tasksForDate, setTasksForDate] = useState([]);
     const [allTasks, setAllTasks] = useState([]);  // Almacena todas las tareas para marcar en el calendario
     const [view, setView] = useState('month'); // Estado para la vista (mensual/semanal/diaria)
-    const { modifyTask, tasks  } = useContext(TasksContext);
+    const { modifyTask, tasks  } = useTaskContext();
     const [refreshKey, setRefreshKey] = useState(0);
 
     // Función para obtener todas las tareas

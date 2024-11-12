@@ -1,13 +1,13 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types"; // Importamos PropTypes
 import { fetchTasks, createTask, updateTask, updateTasksTatus, deleteTask, scheduleEmailReminder } from "../Services/Api";
 
 
 const TasksContext = createContext();
 
+export const useTaskContext = () => useContext(TasksContext)
 
-
-const TasksProvider = ({ children }) => {
+export const TasksProvider = ({ children }) => {
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -131,5 +131,3 @@ TasksProvider.propTypes = {
     children: PropTypes.node.isRequired,
 };
 
-
-export {TasksProvider, TasksContext}

@@ -1,6 +1,6 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import './Dashboard.css';
-import { TasksContext } from '../../Context/TasksContext';
+import { useTaskContext } from '../../Context/TasksContext';
 import FormTask from '../formTask/FormTask';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,7 +13,7 @@ const Dashboard = () => {
     const [error, setError] = useState(null);
     const [view, setView] = useState(false);
     const [deletingTask, setDeletingTask] = useState(null); // Estado para la animación de eliminación
-    const { tasks, removeTask } = useContext(TasksContext);
+    const { tasks, removeTask } = useTaskContext();
 
     useEffect(() => {
         setTasksState(tasks);

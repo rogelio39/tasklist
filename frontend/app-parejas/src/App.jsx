@@ -10,31 +10,35 @@ import CalendarTask from './components/CalendarTasks/CalendarTask';
 import TaskStats from './components/TaskStats/TaskStats';
 import { TasksProvider } from './Context/TasksContext';
 import Home from './pages/Inicio/Home';
-import {  ToastContainer } from 'react-toastify';
+import { ToastContainer } from 'react-toastify';
+import { AuthProvider } from './Context/AuthContext';
 
 // import TaskForm from './components/TaskForm/TaskForm';
 const App = () => {
   return (
     <TasksProvider>
-      <Router>
-        <div className="app">
-          <NavBar />
-          <ToastContainer /> {/* Asegúrate de tener este contenedor para que se muestren las notificaciones */}
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/tabla" element={<PrivateRoute component={Dashboard} />} />
-            <Route path="/tasks" element={<PrivateRoute component={TaskList} />} />
-            <Route path="/calendar" element={<PrivateRoute component={CalendarTask} />} />
-            <Route path="/stats" element={<PrivateRoute component={TaskStats} />} />
-            {/* <Route path='/taskform' element={<TaskForm/>}/> */}
-            {/* Ruta por defecto */}
-            <Route path="/" element={<Home />} />
-            <Route path="/main" element={<Main />} />
+      <AuthProvider>
+        <Router>
+          <div className="app">
+            <NavBar />
+            <ToastContainer /> {/* Asegúrate de tener este contenedor para que se muestren las notificaciones */}
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/tabla" element={<PrivateRoute component={Dashboard} />} />
+              <Route path="/tasks" element={<PrivateRoute component={TaskList} />} />
+              <Route path="/calendar" element={<PrivateRoute component={CalendarTask} />} />
+              <Route path="/stats" element={<PrivateRoute component={TaskStats} />} />
+              {/* <Route path='/taskform' element={<TaskForm/>}/> */}
+              {/* Ruta por defecto */}
+              <Route path="/" element={<Home />} />
+              <Route path="/main" element={<Main />} />
 
-          </Routes>
-        </div>
-      </Router>
+            </Routes>
+          </div>
+        </Router>
+
+      </AuthProvider>
     </TasksProvider>
   );
 };
