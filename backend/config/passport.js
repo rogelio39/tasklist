@@ -1,41 +1,40 @@
-import passport from 'passport';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { OAuth2Client } from 'google-auth-library';
+import jwt from 'jsonwebtoken';
 import User from '../models/Users.models.js';
 
-const URL1 = process.env.MODE === "DEV" ? process.env.LOCAL_BACKEND_URL : process.env.BACKEND_URL
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: `${URL1}/api/users/auth/google/callback`
-}, async (accessToken, refreshToken, profile, done) => {
+export const googleAuth = async (req, res) => {
+    const { token } = req.body;
+
     try {
-        let user = await User.findOne({ googleId: profile.id });
+        // Verificar el token de Google
+        const ticket = await client.verifyIdToken({
+            idToken: token,
+            audience: process.env.GOOGLE_CLIENT_ID,
+        });
+        const payload = ticket.getPayload();
+
+        // Buscar o crear el usuario en base de datos
+        let user = await User.findOne({ email: payload.email });
         if (!user) {
             user = new User({
-                googleId: profile.id,
-                name: profile.displayName,
-                email: profile.emails[0].value,
-                // Nota: No configuramos el campo `password`
+                googleId: payload.sub,
+                name: payload.name,
+                email: payload.email,
+                // Cualquier otra propiedad necesaria
             });
             await user.save();
         }
-        done(null, user);
+
+        // Crear un JWT usando el ID del usuario
+        const jwtToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+            expiresIn: '1h', // Ajusta el tiempo de expiración como desees
+        });
+
+        // Devolver el JWT al frontend
+        res.json({ token: jwtToken });
     } catch (error) {
-        done(error, null);
+        res.status(401).json({ message: 'Google token verification failed' });
     }
-}));
-
-
-passport.serializeUser((user, done) => {
-    done(null, user.id);
-});
-
-passport.deserializeUser(async (id, done) => {
-    try {
-        const user = await User.findById(id);
-        done(null, user);
-    } catch (error) {
-        done(error, null);
-    }
-});
+};

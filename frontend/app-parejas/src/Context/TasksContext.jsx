@@ -1,6 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
 import PropTypes from "prop-types"; // Importamos PropTypes
-import { fetchTasks, createTask, updateTask, updateTasksTatus, deleteTask, scheduleEmailReminder } from "../Services/Api";
+import { fetchTasks, createTask, updateTask, updateTasksTatus, deleteTask, scheduleEmailReminder } from "../Services/Api.js";
 
 
 const TasksContext = createContext();

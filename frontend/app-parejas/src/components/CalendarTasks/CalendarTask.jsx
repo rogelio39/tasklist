@@ -19,11 +19,12 @@ const CalendarTask = () => {
     useEffect(() => {
         try{
             setAllTasks(tasks)
+            console.log("me estoy ejecutando")
         }catch(error){
             console.error("Error al obtener todas las tareas: ", error);
         }
 
-    },[])
+    },[tasks])
 
 
     const tileClassName = ({ date }) => {

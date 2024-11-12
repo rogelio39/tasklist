@@ -17,6 +17,7 @@ export const createTask = async (req, res) => {
             assignedTo: assignedTo || req.user._id,
             completed: false
         });
+        console.log("newtask", newTask)
 
         await newTask.save();
 

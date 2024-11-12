@@ -4,7 +4,7 @@
 const URL1 = import.meta.env.VITE_REACT_APP_MODE === "DEV" ? import.meta.env.VITE_REACT_APP_LOCAL_URL : import.meta.env.VITE_REACT_APP_BACKEND_URL
 
 // Obtener todas las tareas
-export const fetchTasks = async () => {
+const fetchTasks = async () => {
     const token = localStorage.getItem("token");
     const res = await fetch(`${URL1}/api/tasks`, {
         method: "GET",
@@ -23,7 +23,7 @@ export const fetchTasks = async () => {
 };
 
 // Función para programar el recordatorio
-export const scheduleEmailReminder = async (email, task) => {
+const scheduleEmailReminder = async (email, task) => {
     await fetch(`${URL1}/api/email/schedule-reminder`, {
         method: 'POST',
         headers: {
@@ -32,7 +32,7 @@ export const scheduleEmailReminder = async (email, task) => {
         body: JSON.stringify({ email, task })
     });
 };
-export const fetchTasksForDate = async (date) => {
+const fetchTasksForDate = async (date) => {
     const token = localStorage.getItem('token');
     try {
         const response = await fetch(`${URL1}/api/tasks/tasks-by-date?date=${date.toISOString()}`, {
@@ -53,7 +53,7 @@ export const fetchTasksForDate = async (date) => {
 
 
 // Crear nueva tarea
-export const createTask = async (task) => {
+const createTask = async (task) => {
 
 
     const token = localStorage.getItem("token");
@@ -75,7 +75,7 @@ export const createTask = async (task) => {
 };
 
 // Actualizar una tarea existente
-export const updateTask = async (updatedTask) => {
+const updateTask = async (updatedTask) => {
     const token = localStorage.getItem("token");
 
     const res = await fetch(`${URL1}/api/tasks/${updatedTask._id}`, {
@@ -95,7 +95,7 @@ export const updateTask = async (updatedTask) => {
     return 'ok';
 };
 
-export const updateTasksTatus = async (updatedTask) => {
+const updateTasksTatus = async (updatedTask) => {
 
     const token = localStorage.getItem("token");
     const res = await fetch(`${URL1}/api/tasks/${updatedTask._id}`, {
@@ -116,7 +116,7 @@ export const updateTasksTatus = async (updatedTask) => {
 };
 
 // Eliminar una tarea
-export const deleteTask = async (id) => {
+const deleteTask = async (id) => {
     const token = localStorage.getItem("token");
     const res = await fetch(`${URL1}/api/tasks/${id}`, {
         method: "DELETE",
@@ -138,7 +138,7 @@ export const deleteTask = async (id) => {
 
 //AUTH API
 
-export const Login = async (credentialResponse) => {
+const Login = async (credentialResponse) => {
     try {
         const response = await fetch(`${URL1}/api/users/auth/google`, {
             method: 'POST',
@@ -150,9 +150,9 @@ export const Login = async (credentialResponse) => {
 
         const data = await response.json();
         if (response.ok) {
-            localStorage.setItem('token', data.token); // Token de tu backend
+            localStorage.setItem('token', data.token); // Almacenar el JWT del backend
             console.log('Inicio de sesión exitoso');
-            return data.token
+            return data.token;
         } else {
             console.log('Error en el inicio de sesión:', data.message);
         }
@@ -160,3 +160,6 @@ export const Login = async (credentialResponse) => {
         console.error('Error en la autenticación:', error);
     }
 };
+
+
+export {Login, createTask,  deleteTask, updateTasksTatus, updateTask, fetchTasksForDate, scheduleEmailReminder, fetchTasks}
