@@ -1,34 +1,51 @@
 import Task from '../models/Task.models.js';
 
 // Controlador para crear una nueva tarea
+import Task from '../models/Task.models.js';
+
+// Controlador para crear una nueva tarea
 export const createTask = async (req, res) => {
     const { title, description, dueDate, priority, notes, createdBy, assignedTo } = req.body;
 
-
-    console.log("dueDate", dueDate);
     try {
+        // Validar la fecha de vencimiento (dueDate)
+        const dueDateObj = dueDate ? new Date(dueDate) : null;
+        const createdDate = new Date();
+
+        // Si dueDate es inválido
+        if (isNaN(dueDateObj.getTime())) {
+            return res.status(400).json({ message: 'Fecha de vencimiento inválida' });
+        }
+
+        // Si dueDate es anterior a la fecha de creación, ajustamos la fecha de vencimiento
+        if (dueDateObj <= createdDate) {
+            console.log('La fecha de vencimiento está en el pasado, ajustando a un día después');
+            dueDateObj.setDate(createdDate.getDate() + 1);  // Ajustamos a 1 día después de la fecha actual
+        }
+
+        // Crear la tarea
         const newTask = new Task({
             title,
             description,
-            dueDate: dueDate ? new Date(`${dueDate}T00:00:00-03:00`) : null,
+            dueDate: dueDateObj, // Usamos la fecha ajustada
             priority: priority || 'Medium', 
             notes,
             createdBy: req.user._id, 
             assignedTo: assignedTo || req.user._id,
             completed: false
         });
-        console.log("newtask", newTask)
+
+        console.log("Nueva tarea:", newTask);
 
         await newTask.save();
 
-
         res.status(201).json(newTask);
     } catch (error) {
-        console.error('Error al crear la tarea:', error); // Para ver detalles del error
+        console.error('Error al crear la tarea:', error);
         res.status(500).json({ message: 'Error al crear la tarea', error: error.message });
     }
-    
 };
+
 
 export const updateTask = async (req, res) => {
 
