@@ -9,17 +9,32 @@ export const scheduleEmailReminder = async (req, res) => {
     const jobKey = `${email}-${task.dueDate}`; // Crea una clave única para el trabajo
 
     try {
-        // Configurar la fecha para el inicio del día (00:01) de la fecha de vencimiento
-        const taskDate = new Date(task.dueDate);
-        taskDate.setHours(0, 1, 0, 0); // 00:01 del día de vencimiento
+        // Convertir la fecha de vencimiento y la fecha de creación a objetos de fecha
+        const dueDate = new Date(task.dueDate);
+        const createdDate = new Date(task.createdAt);
+
+        // Calcular el tiempo restante en milisegundos
+        const timeUntilDue = dueDate - createdDate;
+
+        // Verificar que el tiempo restante sea positivo (es decir, una fecha futura)
+        if (timeUntilDue <= 0) {
+            console.log('Error: La fecha de vencimiento ya ha pasado o es el momento actual.');
+            return res.status(400).json({ error: 'La fecha de vencimiento debe ser futura' });
+        }
+
+        // Log para verificar la cantidad de tiempo hasta el vencimiento
+        console.log(`Tiempo hasta el vencimiento: ${timeUntilDue} ms (${timeUntilDue / (1000 * 60 * 60)} horas)`);
 
         // Si ya hay un trabajo programado para esta tarea y usuario, cancélalo antes de crear uno nuevo
         if (scheduledJobs[jobKey]) {
+            console.log(`Cancelando trabajo previo para ${jobKey}`);
             scheduledJobs[jobKey].cancel();
         }
 
-        // Programar el nuevo trabajo
-        scheduledJobs[jobKey] = schedule.scheduleJob(taskDate, async () => {
+        // Programar el nuevo trabajo después del intervalo calculado
+        scheduledJobs[jobKey] = schedule.scheduleJob(new Date(Date.now() + timeUntilDue), async () => {
+            console.log("Ejecutando el envío de correo programado");
+
             const { data, error } = await resend.emails.send({
                 from: 'Acme <bandadelriosali@revista-urbana.com>',
                 to: [email],
@@ -39,6 +54,7 @@ export const scheduleEmailReminder = async (req, res) => {
             delete scheduledJobs[jobKey];
         });
 
+        console.log("Trabajo programado con éxito para dentro de:", timeUntilDue / (1000 * 60), "minutos.");
         res.status(200).json({ message: 'Recordatorio programado con éxito' });
     } catch (error) {
         console.error('Error al programar el recordatorio:', error);
