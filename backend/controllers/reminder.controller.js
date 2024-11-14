@@ -9,11 +9,17 @@ export const scheduleEmailReminder = async (req, res) => {
     const jobKey = `${email}-${task.dueDate}`; // Crea una clave única para el trabajo
 
     try {
-        // Convertir la fecha de vencimiento y la fecha de creación a objetos de fecha
+        // Convertir createdAt y dueDate a fechas
         const dueDate = new Date(task.dueDate);
         const createdDate = new Date(task.createdAt);
 
-        // Calcular el tiempo restante en milisegundos
+        // Verificar que ambas fechas sean válidas
+        if (isNaN(dueDate.getTime()) || isNaN(createdDate.getTime())) {
+            console.log('Error: La fecha de vencimiento o de creación es inválida.');
+            return res.status(400).json({ error: 'Las fechas de creación y vencimiento deben ser válidas' });
+        }
+
+        // Calcular el tiempo hasta el vencimiento en milisegundos
         const timeUntilDue = dueDate - createdDate;
 
         // Verificar que el tiempo restante sea positivo (es decir, una fecha futura)
@@ -25,13 +31,13 @@ export const scheduleEmailReminder = async (req, res) => {
         // Log para verificar la cantidad de tiempo hasta el vencimiento
         console.log(`Tiempo hasta el vencimiento: ${timeUntilDue} ms (${timeUntilDue / (1000 * 60 * 60)} horas)`);
 
-        // Si ya hay un trabajo programado para esta tarea y usuario, cancélalo antes de crear uno nuevo
+        // Cancelar cualquier trabajo programado previo para esta tarea y usuario
         if (scheduledJobs[jobKey]) {
             console.log(`Cancelando trabajo previo para ${jobKey}`);
             scheduledJobs[jobKey].cancel();
         }
 
-        // Programar el nuevo trabajo después del intervalo calculado
+        // Programar el nuevo trabajo para el tiempo calculado
         scheduledJobs[jobKey] = schedule.scheduleJob(new Date(Date.now() + timeUntilDue), async () => {
             console.log("Ejecutando el envío de correo programado");
 
