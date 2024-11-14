@@ -9,7 +9,12 @@ export const scheduleEmailReminder = async (req, res) => {
     const jobKey = `${email}-${task.dueDate}`; // Crea una clave única para el trabajo
 
     try {
-        // Convertir createdAt y dueDate a fechas
+        // Mostrar los valores y tipos de dueDate y createdAt antes de la conversión
+        console.log("Verificando fechas:");
+        console.log("dueDate:", task.dueDate, typeof task.dueDate);
+        console.log("createdAt:", task.createdAt, typeof task.createdAt);
+
+        // Convertir createdAt y dueDate a objetos Date
         const dueDate = new Date(task.dueDate);
         const createdDate = new Date(task.createdAt);
 
@@ -28,7 +33,6 @@ export const scheduleEmailReminder = async (req, res) => {
             return res.status(400).json({ error: 'La fecha de vencimiento debe ser futura' });
         }
 
-        // Log para verificar la cantidad de tiempo hasta el vencimiento
         console.log(`Tiempo hasta el vencimiento: ${timeUntilDue} ms (${timeUntilDue / (1000 * 60 * 60)} horas)`);
 
         // Cancelar cualquier trabajo programado previo para esta tarea y usuario
@@ -56,7 +60,6 @@ export const scheduleEmailReminder = async (req, res) => {
                 console.log("Correo enviado con éxito", { data });
             }
 
-            // Elimina el trabajo de la lista después de enviarlo
             delete scheduledJobs[jobKey];
         });
 
