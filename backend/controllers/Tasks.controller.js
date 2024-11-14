@@ -1,9 +1,6 @@
 import Task from '../models/Task.models.js';
 
 // Controlador para crear una nueva tarea
-import Task from '../models/Task.models.js';
-
-// Controlador para crear una nueva tarea
 export const createTask = async (req, res) => {
     const { title, description, dueDate, priority, notes, createdBy, assignedTo } = req.body;
 
