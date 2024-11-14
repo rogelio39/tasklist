@@ -29,7 +29,7 @@ const FormTask = () => {
                 notes: '',
                 dueDate: ''
             });
-            await sendEmail(email, newTask);
+            await sendEmail(email, createATask);
             toast.success('Tarea añadida correctamente');
         } catch (error) {
             console.error('Error al agregar la tarea:', error);

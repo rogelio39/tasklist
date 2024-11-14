@@ -55,7 +55,6 @@ const fetchTasksForDate = async (date) => {
 // Crear nueva tarea
 const createTask = async (task) => {
 
-
     const token = localStorage.getItem("token");
     const res = await fetch(`${URL1}/api/tasks`, {
         method: "POST",
