@@ -10,20 +10,11 @@ export const scheduleEmailReminder = async (req, res) => {
 
     try {
         // Mostrar los valores y tipos de dueDate y createdAt antes de la conversión
+    
+
+        // Convertir createdAt y dueDate a objetos Date
         const dueDate = new Date(task.dueDate);
-        const createdDate = task.createdAt ? new Date(task.createdAt) : new Date();
-        
-        // Si la fecha de vencimiento está en el pasado, ajustarla
-        if (dueDate <= createdDate) {
-            console.log('El dueDate está en el pasado, ajustando para prueba');
-            dueDate.setDate(createdDate.getDate() + 1); // Ajuste para que sea un día en el futuro
-        }
-        
-        // Revisa los valores después del ajuste
-        console.log("Verificando fechas después del ajuste:");
-        console.log("dueDate ajustado:", dueDate);
-        console.log("createdDate:", createdDate);
-        
+        const createdDate = new Date(task.createdAt);
 
         // Verificar que ambas fechas sean válidas
         if (isNaN(dueDate.getTime()) || isNaN(createdDate.getTime())) {

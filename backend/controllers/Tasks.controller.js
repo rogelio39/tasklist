@@ -5,7 +5,7 @@ export const createTask = async (req, res) => {
     const { title, description, dueDate, priority, notes, createdBy, assignedTo } = req.body;
 
 
-
+    console.log("dueDate", dueDate);
     try {
         const newTask = new Task({
             title,
