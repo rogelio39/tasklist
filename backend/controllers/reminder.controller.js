@@ -1,7 +1,7 @@
 import schedule from 'node-schedule';
 import { resend } from '../config/resend.js';
+import { DateTime } from 'luxon';
 
-// Objeto para almacenar los trabajos programados
 const scheduledJobs = {};
 
 export const scheduleEmailReminder = async (req, res) => {
@@ -9,29 +9,22 @@ export const scheduleEmailReminder = async (req, res) => {
     const jobKey = `${email}-${task.dueDate}`; // Crea una clave única para el trabajo
 
     try {
-        const dueDate = new Date(task.dueDate);
-        const createdDate = task.createdAt ? new Date(task.createdAt) : new Date();
+        // Convertir `dueDate` a DateTime en UTC
+        const dueDate = DateTime.fromISO(task.dueDate, { zone: 'UTC' });
 
-        // Si la fecha de vencimiento está en el pasado, ajustarla
-        if (dueDate <= createdDate) {
-            console.log('El dueDate está en el pasado, ajustando para prueba');
-            dueDate.setDate(createdDate.getDate() + 1); // Ajuste para que sea un día en el futuro
-        }
+        console.log('Fecha de vencimiento recibida (dueDate en UTC):', dueDate.toISO());
 
-        // Verificar que la fecha de vencimiento sea válida
-        if (isNaN(dueDate.getTime())) {
-            return res.status(400).json({ error: 'Fecha de vencimiento inválida' });
-        }
+        // Mantener la misma fecha, pero ajustar la hora para las 00:30 en UTC
+        const reminderDate = dueDate.set({ hour: 0, minute: 30, second: 0, millisecond: 0 });
 
-        // Ajustar la fecha para enviar el recordatorio un día antes a las 23:59
-        const reminderDate = new Date(dueDate);
-        reminderDate.setDate(dueDate.getDate() - 1); // Un día antes
-        reminderDate.setHours(23, 59, 0, 0); // A las 23:59 del día anterior
+        console.log('Fecha programada para el recordatorio (reminderDate):', reminderDate.toISO());
 
         // Calcular el tiempo hasta el recordatorio
-        const timeUntilReminder = reminderDate - new Date();
+        const timeUntilReminder = reminderDate.diffNow().toMillis();
 
+        // Verificar que el recordatorio está en el futuro
         if (timeUntilReminder <= 0) {
+            console.log('El recordatorio debe ser para una fecha futura');
             return res.status(400).json({ error: 'El recordatorio debe ser para una fecha futura' });
         }
 
@@ -42,8 +35,8 @@ export const scheduleEmailReminder = async (req, res) => {
         }
 
         // Programar el trabajo para el recordatorio
-        scheduledJobs[jobKey] = schedule.scheduleJob(reminderDate, async () => {
-            console.log("Ejecutando el envío de correo programado");
+        scheduledJobs[jobKey] = schedule.scheduleJob(reminderDate.toJSDate(), async () => {
+            console.log("Ejecutando el envío de correo programado en:", DateTime.now().toISO());
 
             const { data, error } = await resend.emails.send({
                 from: 'Acme <bandadelriosali@revista-urbana.com>',
@@ -57,13 +50,13 @@ export const scheduleEmailReminder = async (req, res) => {
             if (error) {
                 console.log("Error en resend", { error });
             } else {
-                console.log("Correo enviado con éxito", { data });
+                console.log("Correo enviado con éxito:", { data });
             }
 
             delete scheduledJobs[jobKey];
         });
 
-        console.log("Trabajo programado con éxito para:", reminderDate);
+        console.log("Trabajo programado con éxito para:", reminderDate.toISO());
         res.status(200).json({ message: 'Recordatorio programado con éxito' });
     } catch (error) {
         console.error('Error al programar el recordatorio:', error);
