@@ -1,6 +1,5 @@
 import express from 'express';
 import { registerUser, loginUser } from '../controllers/Users.controller.js';
-import passport from 'passport';
 import jwt from 'jsonwebtoken';
 import User from '../models/Users.models.js';
 import { OAuth2Client } from 'google-auth-library';
@@ -11,17 +10,6 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 UserRouter.post('/register', registerUser);
 UserRouter.post('/login', loginUser);
 
-// Ruta de autenticación de Google (cuando el usuario hace clic en "Iniciar sesión con Google")
-UserRouter.get('/auth/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-
-// Callback de autenticación de Google
-UserRouter.get('/auth/google/callback',
-    passport.authenticate('google', { session: false }),
-    (req, res) => {
-        const token = jwt.sign({ id: req.user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        res.json({ token });
-    }
-);
 
 
 // Ruta para verificar y manejar el token de Google enviado desde el frontend
